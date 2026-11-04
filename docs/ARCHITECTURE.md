@@ -66,7 +66,7 @@ Tidak ada kolom pengirim, IP, perangkat, grup, atau lokasi. Varian juga tidak me
 
 Default deny: hak bawaan Supabase dicabut, lalu diberi ulang per tabel/kolom.
 
-- `anon`: `select` keluarga `published`, varian `approved` di keluarga itu, mutasi yang anak dan induknya terlihat, tautan fact-check keluarga terlihat. Tanpa tulis, tanpa `match_variants`.
+- `anon`: `select` keluarga `published`, varian `approved` di keluarga itu, mutasi yang anak dan induknya terlihat, tautan fact-check keluarga terlihat, dan daftar `trusted_publishers` (domain + nama, untuk menampilkan nama penerbit; migrasi `000600`). Tanpa tulis, tanpa `match_variants`.
 - `contributor`: `insert` takedown saja. Tidak bisa insert/ubah/hapus varian dan tidak bisa membaca pending.
 - `curator`/`admin`: moderasi varian dan keluarga, kelola `mutations`, `factcheck_links`, `trusted_publishers`, takedown. Hanya `admin` yang mengubah peran.
 - `service_role` (`services/nlp`): melewati RLS; satu-satunya pemanggil `match_variants`.
@@ -80,3 +80,11 @@ Sejak S3 (`20261104000400_ingest.sql`) insert varian dari klien dicabut: semua k
 - Gambar tidak menyentuh disk: Content-Length dicek sebelum parsing, `spool_max_size` Starlette dinaikkan, Tesseract lewat stdin/stdout. Diuji dengan audit hook Python.
 - Rate limit per IP atau per kontributor (JWT Supabase terverifikasi), kunci di-HMAC dengan garam yang diganti tiap jam. Handler validasi tidak menggemakan input; access log uvicorn dimatikan (memuat IP).
 - Kontainer berjalan read-only dengan `/tmp` di RAM; model diunduh saat build, runtime offline.
+
+## Widget sematan dan header keamanan (S6)
+
+- `apps/web` memakai dua route group dengan root layout sendiri: `(site)` (header/footer) dan `(embed)` (tanpa chrome, `noindex`). `/embed/[id]` menampilkan pohon mini (SVG server-side), varian tertua yang dilaporkan, dan tautan "Lihat lengkap".
+- `public/embed.js` membaca `data-silsilah-id`, menyisipkan iframe `sandbox` tanpa `allow-same-origin`, dan hanya menerima pesan tinggi (`silsilah:height`) dari `contentWindow` iframe itu.
+- Header (`next.config.ts`): semua rute kecuali `/embed/:id` memakai `frame-ancestors 'none'` + `X-Frame-Options: DENY`; `/embed/:id` memakai `frame-ancestors *` (sengaja, agar bisa disematkan di situs mana pun) tanpa form dan tanpa iframe turunan. Keduanya: CSP, HSTS, `Referrer-Policy: no-referrer`, `nosniff`, `Permissions-Policy`. `connect-src` dibatasi ke situs sendiri, Supabase, dan layanan NLP.
+- Batas CSP yang diketahui: `script-src 'unsafe-inline'` karena skrip hidrasi Next; ganti ke nonce lewat `proxy.ts` bila kelak ada konten pengguna yang dirender sebagai HTML.
+- API NLP: middleware menolak body `/submit/text` > 64 KiB (413) atau tanpa Content-Length (411) sebelum JSON diurai, dan menambahkan `nosniff`, `no-store`, `Referrer-Policy`, CSP `default-src 'none'`.

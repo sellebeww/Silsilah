@@ -54,9 +54,12 @@ Kriteria selesai tiap langkah: lihat "Definition of Done" di `CLAUDE.md`.
 - [ ] Cek aksesibilitas dasar (keyboard, kontras, alt text).
 
 ## S6 Fact-check link + widget + hardening + README
-- [ ] Kurator menambah tautan fact-check dari daftar sumber resmi (allowlist domain).
-- [ ] Widget embed ringan (iframe) untuk satu keluarga.
-- [ ] Rate limit tanpa menyimpan IP; batas ukuran body.
-- [ ] Alur takedown: formulir, antrian kurator, penghapusan permanen.
-- [ ] Header keamanan, CSP, audit dependensi.
-- [ ] README: tujuan, batas klaim, cara menjalankan, kebijakan privasi.
+- [x] Tautan fact-check hanya dari allowlist domain: constraint DB + penyaringan ulang saat render (`trustedLinks`); halaman keluarga menampilkan "Hasil pemeriksaan fakta resmi" dengan nama penerbit, judul, label putusan, `rel="noopener noreferrer nofollow"`.
+- [x] Widget embed: `/embed/[id]` (route group terpisah, tanpa header/footer), `public/embed.js` (iframe tersandbox, tinggi otomatis), `/embed` berisi kode salin-tempel.
+- [x] Rate limit tanpa menyimpan IP; batas ukuran body teks (413/411) dan gambar.
+- [x] Header keamanan web (CSP, HSTS, Referrer-Policy, frame-ancestors per route) dan API; `scripts/check_hygiene.py` (secret, log PII) di CI; audit dependensi di CI.
+- [x] CI GitHub Actions: higiene, ruff/mypy/pytest, eslint/tsc/vitest/build, pgTAP, `make eval` (hanya melaporkan), audit.
+- [x] README (Indonesia + ringkasan Inggris), CONTRIBUTING, SECURITY.
+- [ ] Alur takedown: formulir ada (`/hapus`); antrean di dasbor kurator dan penghapusan permanen BELUM ada.
+- [ ] CI belum pernah dijalankan; `package-lock.json` belum memuat devDependencies (regenerasi online lalu ganti `npm install` dengan `npm ci` di CI).
+- [ ] Belum terverifikasi di lingkungan ini: tes web (vitest/eslint/tsc/build/e2e), pgTAP (migrasi 000500 dan 000600), tes anonimisasi (cache model NER tidak lengkap). Lihat laporan akhir S6.
