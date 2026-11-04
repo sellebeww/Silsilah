@@ -95,9 +95,7 @@ jobs:
           node-version: 22
           cache: npm
           cache-dependency-path: apps/web/package-lock.json
-      # shortcut: package-lock.json belum memuat devDependencies (dibuat tanpa jaringan); setelah
-      # `npm install` dijalankan online dan lockfile di-commit, ganti dengan `npm ci`.
-      - run: npm install --no-audit --no-fund
+      - run: npm ci --no-audit --no-fund
       - run: npm run lint
       - run: npx tsc --noEmit
       - run: npm test
@@ -123,9 +121,10 @@ jobs:
         with:
           node-version: 22
       - uses: astral-sh/setup-uv@v5
-      - name: npm audit (high ke atas)
+      - name: npm audit (dependensi produksi, high ke atas)
         working-directory: apps/web
-        run: npm install --package-lock-only --no-audit --no-fund && npm audit --audit-level=high
+        # shortcut: dependensi dev (eslint/minimatch, 16 moderate) tidak ikut gerbang; tidak dikirim ke produksi.
+        run: npm audit --omit=dev --audit-level=high
       - name: pip-audit
         working-directory: services/nlp
         # torch dikecualikan: varian "+cpu" dari indeks PyTorch tidak dikenal basis data kerentanan PyPI.

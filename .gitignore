@@ -11,3 +11,10 @@ __pycache__/
 node_modules/
 .next/
 supabase/.temp/
+
+# artefak build/tes web
+apps/web/AGENTS.md
+apps/web/next-env.d.ts
+*.tsbuildinfo
+apps/web/test-results/
+apps/web/playwright-report/
