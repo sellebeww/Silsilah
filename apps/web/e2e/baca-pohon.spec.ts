@@ -29,11 +29,11 @@ const FAM = "f000000a-0000-0000-0000-000000000000";
 test("fact-check resmi: hanya penerbit terdaftar, rel aman", async ({ page }) => {
   await page.goto(`/keluarga/${FAM}`);
   await expect(page.getByRole("heading", { name: "Hasil pemeriksaan fakta resmi" })).toBeVisible();
-  const links = page.locator("#fc a");
+  const links = page.locator("section[aria-labelledby=fc] a");
   await expect(links).toHaveCount(1); // tautan jahat.example di fixture tidak ditampilkan
   await expect(links.first()).toHaveAttribute("rel", "noopener noreferrer nofollow");
-  await expect(page.locator("#fc")).toContainText("Pemeriksa Fakta Contoh");
-  await expect(page.locator("#fc")).toContainText("Hoaks");
+  await expect(page.locator("section[aria-labelledby=fc]")).toContainText("Pemeriksa Fakta Contoh");
+  await expect(page.locator("section[aria-labelledby=fc]")).toContainText("Hoaks");
 });
 
 test("widget embed: ringkas tanpa header/footer, boleh dibingkai; halaman lain tidak", async ({ page, request }) => {
@@ -55,10 +55,12 @@ test("halaman /embed memberi kode salin-tempel", async ({ page }) => {
 });
 
 test("embed.js menyisipkan iframe widget", async ({ page }) => {
-  await page.route("http://host.test/", (r) =>
+  // Halaman "induk" disajikan dari origin yang sama: Chrome (Local Network Access) memblokir halaman lain yang memuat skrip dari loopback.
+  // Pembingkaian lintas origin sudah dicek lewat header frame-ancestors di tes widget.
+  await page.route("http://localhost:3100/__host", (r) =>
     r.fulfill({ contentType: "text/html", body: `<div data-silsilah-id="${FAM}"></div><script async src="http://localhost:3100/embed.js"></script>` }),
   );
-  await page.goto("http://host.test/");
+  await page.goto("http://localhost:3100/__host");
   await expect(page.locator("iframe")).toHaveAttribute("src", `http://localhost:3100/embed/${FAM}`);
   await expect(page.frameLocator("iframe").getByText("Tertua yang dilaporkan")).toBeVisible();
 });
