@@ -6,13 +6,29 @@ authors = [{ name = "Vassel Goleyu" }]
 license = "LicenseRef-Proprietary"
 classifiers = ["Private :: Do Not Upload"]
 requires-python = ">=3.12,<3.13"
-dependencies = []
-
-[project.optional-dependencies]
-ner = ["transformers>=4.45", "torch>=2.6"]
+dependencies = [
+    "fastapi>=0.162.0",
+    "httpx>=0.28.1",
+    "pillow>=13.0.0",
+    "pyjwt[crypto]>=2.15.1",
+    "python-multipart>=0.0.33",
+    "sentence-transformers>=6.2.0",
+    "torch>=2.6",
+    "transformers>=4.45",
+    "uvicorn>=0.54.0",
+]
 
 [dependency-groups]
 dev = ["pytest>=8", "ruff>=0.6", "mypy>=1.11"]
+
+# Linux (Docker) memakai wheel torch CPU agar image tidak membawa pustaka CUDA.
+[tool.uv.sources]
+torch = [{ index = "pytorch-cpu", marker = "sys_platform == 'linux'" }]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
 
 [build-system]
 requires = ["hatchling"]
@@ -33,6 +49,7 @@ ignore = ["SIM905"]  # daftar kata ditulis sebagai "a b c".split() agar mudah di
 # karakter mirip-ASCII (digit fullwidth, en dash) disengaja: itulah yang dideteksi/diuji
 "src/silsilah/anonymizer/*" = ["RUF001"]
 "tests/anonymizer/*" = ["RUF001", "E501"]
+"scripts/*" = ["E501"]  # teks contoh sintetis panjang
 
 [tool.mypy]
 strict = true
