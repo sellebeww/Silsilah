@@ -34,3 +34,10 @@ dl { display:grid; grid-template-columns:auto 1fr; gap:2px 12px; } dt { font-wei
 del { background:#fecaca; color:#450a0a; text-decoration:line-through; }
 ins { background:#bbf7d0; color:#052e16; text-decoration:underline; }
 .legend { color:var(--muted); font-size:.9rem; }
+.embed-body { background:transparent; }
+.embed { padding:12px 16px; max-width:640px; }
+.embed h1 { font-size:1.15rem; margin:0 0 8px; }
+.embed blockquote { margin:8px 0; padding-left:12px; border-left:3px solid var(--line); }
+.mini-tree { display:block; width:100%; max-height:180px; }
+.embed-preview { width:100%; max-width:640px; height:460px; border:1px solid var(--line); border-radius:8px; }
+textarea[readonly] { font:0.85rem/1.4 ui-monospace, monospace; }
