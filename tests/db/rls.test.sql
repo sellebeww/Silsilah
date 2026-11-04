@@ -3,7 +3,7 @@
 -- JWT diset di dua kunci: auth.uid() versi lama membaca claim.sub, versi GoTrue membaca claims.
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(21);
+select plan(22);
 
 -- Kosongkan data seed agar hitungan pasti; ikut di-rollback.
 truncate public.families, public.variants, public.mutations, public.factcheck_links,
@@ -98,7 +98,11 @@ select throws_ok(
      values ('Laporan anon', repeat('f', 64), '2026-01-01') $$,
   '42501', null, 'anon tidak bisa insert varian'
 );
-select throws_ok('select 1 from public.trusted_publishers', '42501', null, 'anon tidak bisa membaca trusted_publishers');
+select is((select count(*)::int from public.trusted_publishers), 1, 'anon boleh membaca daftar penerbit resmi (untuk nama penerbit)');
+select throws_ok(
+  $$ insert into public.trusted_publishers (domain, name) values ('jahat.example', 'Penerbit palsu') $$,
+  '42501', null, 'anon tidak bisa menambah penerbit'
+);
 select throws_ok(
   $$ select * from public.match_variants(array_fill(0.1::real, array[384])::extensions.vector, 0.5, 10) $$,
   '42501', null, 'anon tidak bisa memanggil match_variants'
