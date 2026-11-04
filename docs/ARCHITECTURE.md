@@ -6,7 +6,7 @@
  Browser (form teks / unggah gambar)
     │  HTTPS, body tidak pernah dilog
     ▼
- services/nlp  POST /v1/submissions ───────────── semua di memori ──────────────┐
+ services/nlp  POST /submit/text | /submit/image ─ semua di memori ─────────────┐
     │                                                                           │
     ├─ 1. OCR (jika gambar)   Tesseract ind+eng; byte gambar di-del setelahnya  │
     ├─ 2. Normalisasi         NFKC, rapikan spasi/emoji berulang                │
@@ -30,7 +30,7 @@
 1. **OCR.** Gambar dibaca ke memori (batas ukuran dan tipe MIME diperiksa), di-OCR, lalu referensinya dibuang. Tidak ada penulisan ke disk atau Supabase Storage.
 2. **Normalisasi.** Unicode NFKC dan perapian whitespace. Teks hasil normalisasi adalah yang dianonimkan dan ditampilkan.
 3. **Anonimisasi** (rinci di `ANONYMIZATION.md`). Pola regex (nomor telepon Indonesia `+62/08`, email, NIK 16 digit, nomor rekening, pelat nomor, URL dengan parameter pelacak) ditambah NER untuk nama orang. Diganti placeholder bertipe. Fail-closed: exception atau timeout = submission ditolak.
-4. **Embedding.** Hanya dari teks tersamar. Prefiks sesuai model (e5: `query: `). Dimensi dari `EMBEDDING_DIM`.
+4. **Embedding.** Hanya dari teks tersamar, `paraphrase-multilingual-MiniLM-L12-v2` (384 dim, L2-normalized), dimuat sekali saat startup. Dipilih dengan `services/nlp/scripts/compare_embeddings.py`: pada seed, kemiripan antar-keluarga rata-rata 0,17 (e5-small: 0,83). Batas: input dipotong di 128 token. Duplikat persis (hash sama) tidak di-embed ulang.
 5. **Penempatan.**
    - `sha256(teks tersamar ternormalisasi)` sama → laporan ulang varian yang ada (`report_count++`).
    - kNN kosinus tertinggi ≥ `PLACEMENT_SIM_DUPLICATE` → laporan ulang varian tetangga.
@@ -67,8 +67,16 @@ Tidak ada kolom pengirim, IP, perangkat, grup, atau lokasi. Varian juga tidak me
 Default deny: hak bawaan Supabase dicabut, lalu diberi ulang per tabel/kolom.
 
 - `anon`: `select` keluarga `published`, varian `approved` di keluarga itu, mutasi yang anak dan induknya terlihat, tautan fact-check keluarga terlihat. Tanpa tulis, tanpa `match_variants`.
-- `contributor`: `insert` varian hanya di kolom isi (status otomatis `pending`); `insert` takedown. Tidak bisa ubah/hapus varian apa pun dan tidak bisa membaca pending.
+- `contributor`: `insert` takedown saja. Tidak bisa insert/ubah/hapus varian dan tidak bisa membaca pending.
 - `curator`/`admin`: moderasi varian dan keluarga, kelola `mutations`, `factcheck_links`, `trusted_publishers`, takedown. Hanya `admin` yang mengubah peran.
 - `service_role` (`services/nlp`): melewati RLS; satu-satunya pemanggil `match_variants`.
 
-Catatan: insert lewat JWT kontributor langsung ke PostgREST melewati anonimisasi `services/nlp`. S3 memutuskan apakah grant `insert` untuk `authenticated` dicabut sehingga semua kiriman wajib lewat `services/nlp`.
+Sejak S3 (`20261104000400_ingest.sql`) insert varian dari klien dicabut: semua kiriman wajib lewat `services/nlp` agar dianonimkan dulu. Duplikat persis ditangani atomik oleh `register_duplicate_report` / `insert_pending_variant` (service role saja).
+
+## Ingest (S3)
+
+- `POST /submit/text` JSON `{text, first_seen_date, date_precision}`; `POST /submit/image` multipart (`image` JPEG/PNG/WebP ≤ 5 MB + field tanggal). 201 = varian baru, 200 = duplikat.
+- Validasi: teks 20–5000 karakter, tanggal ≤ hari ini (WIB), tanggal perkiraan disimpan di awal bulan/tahun, isi gambar dicek dengan Pillow (bukan ekstensi), batas piksel anti decompression bomb.
+- Gambar tidak menyentuh disk: Content-Length dicek sebelum parsing, `spool_max_size` Starlette dinaikkan, Tesseract lewat stdin/stdout. Diuji dengan audit hook Python.
+- Rate limit per IP atau per kontributor (JWT Supabase terverifikasi), kunci di-HMAC dengan garam yang diganti tiap jam. Handler validasi tidak menggemakan input; access log uvicorn dimatikan (memuat IP).
+- Kontainer berjalan read-only dengan `/tmp` di RAM; model diunduh saat build, runtime offline.

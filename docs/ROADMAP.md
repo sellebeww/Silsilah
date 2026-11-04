@@ -23,14 +23,17 @@ Kriteria selesai tiap langkah: lihat "Definition of Done" di `CLAUDE.md`.
 - [x] 67 kasus sintetis + 24 holdout; precision/recall di `docs/ANONYMIZATION.md`.
 - [x] Modul tanpa logging; error tidak memuat teks (diuji).
 - [ ] Pelat nomor dan alamat jalan: belum dideteksi (lihat keterbatasan di ANONYMIZATION.md).
-- [ ] Timeout per submission: diterapkan di S3 pada level endpoint.
+- [x] Timeout per submission: `SUBMIT_TIMEOUT_S` di level endpoint (S3).
 
 ## S3 Ingest (teks / OCR / embedding)
-- [ ] `POST /v1/submissions` untuk teks dan gambar (batas ukuran, tipe MIME).
-- [ ] OCR Tesseract `ind+eng` di memori; byte gambar dibuang.
-- [ ] Loader embedding dari env; tolak jika dimensi ≠ `EMBEDDING_DIM`.
-- [ ] Tulis varian `pending` lewat service role.
-- [ ] Tes: tidak ada teks mentah/gambar di DB, disk, atau log.
+- [x] `POST /submit/text` dan `POST /submit/image` (≤ 5 MB, JPEG/PNG/WebP dicek dari isi).
+- [x] OCR Tesseract `ind+eng` lewat stdin/stdout; gambar dibuang setelah teks diambil.
+- [x] `EmbeddingProvider` lokal (MiniLM, L2, batch), dimuat sekali; tolak jika dimensi ≠ `EMBEDDING_DIM`.
+- [x] Duplikat persis via `body_hash` (report_count naik, tanggal lebih awal diperbarui) lalu simpan `pending` lewat RPC service role.
+- [x] Validasi, rate limit tanpa IP mentah, CORS terbatas, timeout per kiriman.
+- [x] Tes: pipeline dengan DB tiruan, tidak ada teks mentah/gambar di disk atau log (audit hook), duplikat, validasi; pgTAP fungsi ingest.
+- [x] Insert varian langsung dari klien dicabut (semua lewat anonimisasi).
+- [ ] Dockerfile + docker-compose ditulis, tetapi build image dan tes OCR Tesseract asli BELUM terverifikasi (disk penuh saat S3).
 
 ## S4 Pohon + diff
 - [ ] Penempatan: hash persis → duplikat → anak → keluarga baru, ambang dari env.

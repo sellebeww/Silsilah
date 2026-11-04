@@ -51,12 +51,12 @@ Jalankan: `cd services/nlp && uv run python -m tests.anonymizer.eval_report`. Di
 
 | Set | Konfigurasi | Recall | Precision | Over-masking |
 |---|---|---|---|---|
-| Tuning: 67 kasus, 59 nilai PII, 70 `keep` | regex + heuristik + NER | 59/59 (1,00) | 59/59 (1,00) | 0/70 |
-| | regex + heuristik saja | 56/59 (0,95) | 1,00 | 0/70 |
+| Tuning: 68 kasus, 60 nilai PII, 71 `keep` | regex + heuristik + NER | 60/60 (1,00) | 60/60 (1,00) | 0/71 |
+| | regex + heuristik saja | 57/60 (0,95) | 1,00 | 0/71 |
 | **Holdout**: 24 kasus, 23 nilai PII, 16 `keep` | regex + heuristik + NER | **23/23 (1,00)** | **23/23 (1,00)** | **1/16** |
 | | regex + heuristik saja | 20/23 (0,87) | 1,00 | 1/16 |
 
-Set tuning dipakai untuk menyetel aturan, jadi angkanya optimis. Set holdout (`HOLDOUT` di `tests/anonymizer/cases.py`) ditulis sesudah penyetelan dan tidak dipakai untuk menyetel. Satu kegagalannya: `PERHATIAN!!! BAPAK BUDIMAN SETIAWAN MENIPU WARGA` → `BAPAK [NAMA] WARGA` (kata kerja kapital ikut tersamar). Kedua set kecil dan sintetis, ditulis oleh orang yang sama dengan pembuat aturan. Angka di atas **bukan jaminan** untuk pesan nyata.
+Set tuning dipakai untuk menyetel aturan, jadi angkanya optimis. Kasus `name-lowercase-two` ditambahkan di S3 setelah uji integrasi menemukan nama dua kata huruf kecil bocor separuh (`pak sutrisno [NAMA]`). Set holdout (`HOLDOUT` di `tests/anonymizer/cases.py`) ditulis sesudah penyetelan dan tidak dipakai untuk menyetel. Satu kegagalannya: `PERHATIAN!!! BAPAK BUDIMAN SETIAWAN MENIPU WARGA` → `BAPAK [NAMA] WARGA` (kata kerja kapital ikut tersamar). Kedua set kecil dan sintetis, ditulis oleh orang yang sama dengan pembuat aturan. Angka di atas **bukan jaminan** untuk pesan nyata.
 
 ## Keterbatasan yang diketahui
 
