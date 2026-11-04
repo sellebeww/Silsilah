@@ -161,6 +161,28 @@ def test_cors_only_allowed_origin(env: Env) -> None:
     assert "access-control-allow-origin" not in bad.headers
 
 
+def test_oversized_text_body_rejected_before_parsing_with_cors(env: Env) -> None:
+    big = {"text": "x" * 70_000, "first_seen_date": "2026-03-10"}
+    resp = env.client.post("/submit/text", json=big, headers={"Origin": "http://localhost:3000"})
+    assert resp.status_code == 413 and not env.repo.rows
+    assert resp.headers["access-control-allow-origin"] == "http://localhost:3000"
+    assert "xxxx" not in resp.text
+
+
+def test_text_without_content_length_rejected(env: Env) -> None:
+    def chunks() -> Any:
+        yield b"{}"
+
+    resp = env.client.post("/submit/text", content=chunks(), headers={"Content-Type": "application/json"})
+    assert resp.status_code == 411 and not env.repo.rows
+
+
+def test_api_responses_carry_security_headers(env: Env) -> None:
+    h = env.client.get("/health").headers
+    assert h["x-content-type-options"] == "nosniff" and h["cache-control"] == "no-store"
+    assert "frame-ancestors 'none'" in h["content-security-policy"]
+
+
 # --- alur gambar ---
 
 

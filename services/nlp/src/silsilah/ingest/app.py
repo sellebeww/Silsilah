@@ -8,7 +8,7 @@ import asyncio
 import logging
 import math
 import uuid
-from collections.abc import AsyncIterator, Callable
+from collections.abc import AsyncIterator, Awaitable, Callable
 from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
 from datetime import date
@@ -46,6 +46,14 @@ from .settings import Settings
 
 MAX_IMAGE_BYTES = 5 * 1024 * 1024
 _MULTIPART_OVERHEAD = 64 * 1024
+# 5000 karakter yang semuanya di-escape \uXXXX (30 KB) plus metadata, dengan sisa ruang.
+MAX_TEXT_BODY_BYTES = 64 * 1024
+SECURITY_HEADERS = {
+    "X-Content-Type-Options": "nosniff",
+    "Cache-Control": "no-store",
+    "Referrer-Policy": "no-referrer",
+    "Content-Security-Policy": "default-src 'none'; frame-ancestors 'none'",
+}
 # Starlette menulis upload yang melebihi spool_max_size ke file sementara di disk; dinaikkan di atas batas
 # Content-Length yang kita terima, sehingga gambar selalu tinggal di memori.
 MultiPartParser.spool_max_size = MAX_IMAGE_BYTES + _MULTIPART_OVERHEAD
@@ -124,6 +132,24 @@ def create_app(settings: Settings | None = None, deps: Deps | None = None) -> Fa
 
     app = FastAPI(title="Silsilah NLP", lifespan=lifespan, docs_url=None, redoc_url=None)
     app.state.limiter = RateLimiter(settings.rate_limit_per_hour)
+
+    # Didaftarkan SEBELUM CORS agar berada di dalamnya: penolakan 411/413 tetap membawa header CORS.
+    @app.middleware("http")
+    async def guard(request: Request, call_next: Callable[[Request], Awaitable[Response]]) -> Response:
+        if request.method == "POST" and request.url.path == "/submit/text":
+            # FastAPI membaca seluruh body sebelum dependency berjalan, jadi ukuran dicek di sini dari header.
+            length = request.headers.get("content-length")
+            if length is None or not length.isdigit():
+                response: Response = JSONResponse({"detail": "Content-Length wajib diisi"}, status_code=411)
+            elif int(length) > MAX_TEXT_BODY_BYTES:
+                response = JSONResponse({"detail": "Body terlalu besar"}, status_code=413)
+            else:
+                response = await call_next(request)
+        else:
+            response = await call_next(request)
+        response.headers.update(SECURITY_HEADERS)
+        return response
+
     app.add_middleware(
         CORSMiddleware,
         allow_origins=list(settings.cors_origins),
