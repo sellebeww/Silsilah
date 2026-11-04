@@ -35,6 +35,7 @@ Jika sebuah tugas bertentangan dengan prinsip di atas, berhenti dan tanyakan.
 ├── supabase/
 │   ├── migrations/          SQL berurutan (skema, RLS, fungsi)
 │   └── seed.sql             data sintetis saja
+├── tests/db/                tes pgTAP untuk skema + RLS
 ├── services/nlp/            FastAPI: OCR, anonimisasi, embedding, penempatan, diff
 │   ├── src/silsilah/
 │   └── tests/
@@ -54,7 +55,7 @@ supabase db reset                           # terapkan migrasi + seed sintetis
 brew install tesseract tesseract-lang       # macOS; butuh paket bahasa ind
 
 # Test
-supabase test db                            # tes RLS (pgTAP)
+supabase test db tests/db                   # tes RLS (pgTAP)
 (cd services/nlp && uv run pytest)
 (cd apps/web && npm test)
 
@@ -88,7 +89,7 @@ Rahasia di `.env` (tidak di-commit). Sediakan `.env.example`.
 - Anonimisasi diuji dengan fixture PII sintetis; tiap pola PII baru = kasus uji baru.
 - Log hanya berisi ID, hash, durasi, dan kode error. Tidak pernah teks pesan (mentah maupun tersamar) atau body request.
 - Teks UI dalam Bahasa Indonesia. Kode dan identifier dalam bahasa Inggris.
-- Satu-satunya penulis tabel varian adalah `services/nlp` (service role). Frontend membaca lewat anon key + RLS.
+- Varian ditulis oleh `services/nlp` (service role) atau JWT kontributor dengan status `pending` saja. Frontend membaca lewat anon key + RLS. Setiap tabel baru: RLS aktif + revoke hak bawaan anon/authenticated.
 
 ## Definition of Done
 

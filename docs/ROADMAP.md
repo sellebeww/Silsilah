@@ -5,13 +5,14 @@ Kriteria selesai tiap langkah: lihat "Definition of Done" di `CLAUDE.md`.
 - [x] **S0 Fondasi dokumen**: CLAUDE.md, ARCHITECTURE, ROADMAP, RISKS.
 
 ## S1 Skema DB + RLS
-- [ ] Inisialisasi `supabase/`, aktifkan ekstensi `vector`.
-- [ ] Migrasi tabel `families`, `variants`, `fact_checks`, `curators`, `takedown_requests` (tanpa kolom identitas pengirim).
-- [ ] Indeks HNSW kosinus pada `variants.embedding`; unik pada `text_hash`.
-- [ ] Fungsi SQL kNN (`match_variants`) yang hanya bisa dipanggil service role.
-- [ ] Kebijakan RLS: anon baca `published`, kurator moderasi, service role tulis.
-- [ ] `seed.sql` dengan 2–3 keluarga hoaks sintetis fiktif.
-- [ ] Tes pgTAP untuk setiap kebijakan RLS.
+- [x] Migrasi di `supabase/migrations/`, ekstensi `vector`.
+- [ ] `supabase init` (`config.toml`): CLI belum terpasang saat S1, jalankan sekali sebelum `supabase start`.
+- [x] Tabel `families`, `variants`, `mutations`, `factcheck_links`, `trusted_publishers`, `contributors`, `takedown_requests` (tanpa kolom identitas pengirim).
+- [x] Indeks HNSW kosinus pada `variants.embedding`; unik pada `body_hash`.
+- [x] `match_variants` (hanya approved, hanya service role).
+- [x] RLS default-deny + grant per kolom: anon baca published/approved, kontributor kirim pending, kurator/admin moderasi.
+- [x] `seed.sql`: 3 keluarga sintetis, 4–5 varian, mutasi angka/institusi/ajakan/tanggal/tempat.
+- [x] Tes pgTAP `tests/db/rls.test.sql` (21 assertion).
 
 ## S2 Anonimisasi
 - [ ] Scaffold `services/nlp` (uv, ruff, mypy strict, pytest).
