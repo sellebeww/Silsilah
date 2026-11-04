@@ -42,7 +42,7 @@ Kriteria selesai tiap langkah: lihat "Definition of Done" di `CLAUDE.md`.
 - [x] Diff kata + kategori dari `keywords.yaml`, baris `mutations`, ringkasan satu baris.
 - [x] Dataset sintetis 8 keluarga + `make eval`; ambang dari sapuan grid (`docs/EVAL.md`).
 - [x] Tes: idempotensi, rebalance, ambiguitas, tanggal tidak presisi, keluarga yang hendak bergabung.
-- [ ] Migrasi `20261104000500_phylogeny.sql` + tes pgTAP ditulis, BELUM dijalankan (Docker tidak hidup, disk penuh).
+- [ ] Migrasi `20261104000500_phylogeny.sql` + tes pgTAP ditulis, BELUM dijalankan (Docker daemon tidak hidup di mesin pengembang).
 - [ ] Re-parent dan gabung keluarga manual oleh kurator (S5, UI kurator).
 
 ## S5 API + UI pohon
@@ -61,5 +61,7 @@ Kriteria selesai tiap langkah: lihat "Definition of Done" di `CLAUDE.md`.
 - [x] CI GitHub Actions: higiene, ruff/mypy/pytest, eslint/tsc/vitest/build, pgTAP, `make eval` (hanya melaporkan), audit.
 - [x] README (Indonesia + ringkasan Inggris), CONTRIBUTING, SECURITY.
 - [ ] Alur takedown: formulir ada (`/hapus`); antrean di dasbor kurator dan penghapusan permanen BELUM ada.
-- [ ] CI belum pernah dijalankan; `package-lock.json` belum memuat devDependencies (regenerasi online lalu ganti `npm install` dengan `npm ci` di CI).
-- [ ] Belum terverifikasi di lingkungan ini: tes web (vitest/eslint/tsc/build/e2e), pgTAP (migrasi 000500 dan 000600), tes anonimisasi (cache model NER tidak lengkap). Lihat laporan akhir S6.
+- [x] RLS ditinjau ulang: insert varian oleh klien dan ubah-teks oleh kurator ditutup (migrasi `20261104000700`), karena melewati anonimizer.
+- [x] Terverifikasi lokal (2026-11-04): ruff, mypy, 229 tes Python (1 skip: Tesseract), eslint, tsc, 19 tes vitest, `next build`, 6 tes e2e di build produksi, `check_hygiene.py`, `npm audit --omit=dev` (0).
+- [ ] BELUM terverifikasi: pgTAP (migrasi 000500, 000600, 000700 dan `tests/db`), tes OCR Tesseract asli, e2e terhadap Supabase lokal sungguhan (e2e memakai PostgREST palsu), dan CI di GitHub (belum pernah jalan).
+- [ ] Sisa 16 temuan `npm audit` tingkat moderate pada rantai dev eslint/minimatch (tidak ikut gerbang CI).
