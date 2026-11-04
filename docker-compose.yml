@@ -1,0 +1,23 @@
+# Copyright (c) 2026 Vassel Goleyu. All rights reserved.
+# Layanan NLP. Supabase lokal dijalankan terpisah dengan `supabase start`.
+services:
+  nlp:
+    build:
+      context: ./services/nlp
+      target: runtime
+    env_file: .env
+    environment:
+      # IP proxy tepercaya yang boleh mengisi X-Forwarded-For (dipakai rate limit, tidak disimpan)
+      FORWARDED_ALLOW_IPS: ${FORWARDED_ALLOW_IPS:-127.0.0.1}
+    ports:
+      - "8000:8000"
+    # Sistem berkas read-only: penulisan ke disk yang tidak disengaja langsung gagal, bukan diam-diam tersimpan.
+    read_only: true
+    tmpfs:
+      - /tmp
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      start_period: 60s
+    restart: unless-stopped
