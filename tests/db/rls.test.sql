@@ -25,7 +25,9 @@ insert into public.variants (id, family_id, parent_id, body_anonymized, body_has
   ('00000000-0000-0000-0000-0000000000a2', '00000000-0000-0000-0000-0000000000f1', '00000000-0000-0000-0000-0000000000a1',
    'Varian uji tertunda', repeat('b', 64), array_fill(0.1::real, array[384])::extensions.vector, '2026-01-02', 'pending'),
   ('00000000-0000-0000-0000-0000000000a3', '00000000-0000-0000-0000-0000000000f2', null,
-   'Varian uji di keluarga tertunda', repeat('c', 64), array_fill(0.1::real, array[384])::extensions.vector, '2026-01-03', 'approved');
+   'Varian uji di keluarga tertunda', repeat('c', 64), array_fill(0.1::real, array[384])::extensions.vector, '2026-01-03', 'approved'),
+  ('00000000-0000-0000-0000-0000000000a4', null, null,
+   'Laporan kontributor uji', repeat('d', 64), null, '2026-02-01', 'pending');
 
 insert into public.mutations (variant_id, parent_variant_id, category, before_text, after_text) values
   ('00000000-0000-0000-0000-0000000000a2', '00000000-0000-0000-0000-0000000000a1', 'number', '3', '5');
@@ -109,10 +111,10 @@ select set_config('request.jwt.claims',
   '{"sub":"00000000-0000-0000-0000-0000000000c1","role":"authenticated"}', true),
   set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-0000000000c1', true);
 
-select lives_ok(
+select throws_ok(
   $$ insert into public.variants (body_anonymized, body_hash, first_seen_reported_at)
-     values ('Laporan kontributor uji', repeat('d', 64), '2026-02-01') $$,
-  'kontributor bisa mengirim varian pending'
+     values ('Laporan kontributor uji', repeat('8', 64), '2026-02-01') $$,
+  '42501', null, 'kontributor tidak bisa insert langsung (wajib lewat services/nlp)'
 );
 select throws_ok(
   $$ insert into public.variants (body_anonymized, body_hash, first_seen_reported_at, moderation_status)
