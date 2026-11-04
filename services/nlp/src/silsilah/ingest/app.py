@@ -7,6 +7,7 @@ Body permintaan tidak pernah dilog atau dikembalikan dalam pesan error. Gambar t
 import asyncio
 import logging
 import math
+import uuid
 from collections.abc import AsyncIterator, Callable
 from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
@@ -25,6 +26,8 @@ from starlette.formparsers import MultiPartParser
 
 from silsilah.anonymizer import AnonymizationError, PiiLeakError
 from silsilah.anonymizer.ner import default_recognizer
+from silsilah.phylogeny.placement import PlacementError, PlacementService
+from silsilah.phylogeny.repository import SupabasePhylogenyRepository
 
 from .auth import InvalidTokenError, TokenVerifier
 from .embedding import SentenceTransformerEmbedding
@@ -60,6 +63,7 @@ class Deps:
     pipeline: IngestPipeline
     ocr: Ocr
     verifier: TokenVerifier
+    placement: PlacementService | None = None
     close: Callable[[], None] = field(default=lambda: None)
 
 
@@ -94,7 +98,14 @@ def build_deps(settings: Settings) -> Deps:
     )
     pipeline = IngestPipeline(repo, embedder, default_recognizer())
     verifier = TokenVerifier(settings.supabase_url, settings.supabase_jwt_secret)
-    return Deps(pipeline, TesseractOcr(settings.ocr_langs), verifier, close=repo.close)
+    tree_repo = SupabasePhylogenyRepository(settings.supabase_url, settings.supabase_service_role_key)
+    placement = PlacementService(tree_repo, settings.placement_sim_family, settings.placement_sim_edge)
+
+    def close() -> None:
+        repo.close()
+        tree_repo.close()
+
+    return Deps(pipeline, TesseractOcr(settings.ocr_langs), verifier, placement, close)
 
 
 def _error(status: int, message: str, exc: Exception) -> JSONResponse:
@@ -139,6 +150,7 @@ def create_app(settings: Settings | None = None, deps: Deps | None = None) -> Fa
         (OcrError, 503, None),
         (RepositoryError, 503, "Penyimpanan sedang tidak tersedia"),
         (TimeoutError, 503, "Pemrosesan melebihi batas waktu"),
+        (PlacementError, 409, None),
     ]
     for exc_type, status, message in handlers:
 
@@ -149,19 +161,24 @@ def create_app(settings: Settings | None = None, deps: Deps | None = None) -> Fa
 
         app.add_exception_handler(exc_type, handler)
 
-    async def rate_limited(request: Request) -> None:
+    def subject(request: Request) -> str | None:
+        """ID pengguna dari Bearer JWT terverifikasi; None tanpa Authorization, 401 bila tidak valid."""
         auth = request.headers.get("authorization")
-        if auth:
-            scheme, _, token = auth.partition(" ")
-            try:
-                if scheme.lower() != "bearer" or not token:
-                    raise InvalidTokenError("format Authorization salah")
-                key = "user:" + request.app.state.deps.verifier.subject(token)
-            except InvalidTokenError:
-                raise HTTPException(401, "Token tidak valid") from None
-        else:
-            # Di balik proxy, uvicorn --proxy-headers mengisi client.host dari X-Forwarded-For tepercaya.
-            key = "ip:" + (request.client.host if request.client else "unknown")
+        if not auth:
+            return None
+        scheme, _, token = auth.partition(" ")
+        try:
+            if scheme.lower() != "bearer" or not token:
+                raise InvalidTokenError("format Authorization salah")
+            return str(request.app.state.deps.verifier.subject(token))
+        except InvalidTokenError:
+            raise HTTPException(401, "Token tidak valid") from None
+
+    async def rate_limited(request: Request) -> None:
+        user = subject(request)
+        # Di balik proxy, uvicorn --proxy-headers mengisi client.host dari X-Forwarded-For tepercaya.
+        ip = request.client.host if request.client else "unknown"
+        key = f"user:{user}" if user else f"ip:{ip}"
         retry_after = request.app.state.limiter.hit(key)
         if retry_after is not None:
             raise HTTPException(
@@ -230,5 +247,43 @@ def create_app(settings: Settings | None = None, deps: Deps | None = None) -> Fa
         pipeline: IngestPipeline = request.app.state.deps.pipeline
         result = await run(pipeline.submit, text, meta.first_seen_date, meta.date_precision)
         return respond("gambar", result, response)
+
+    @app.post("/moderation/variants/{variant_id}/approve")
+    async def approve(variant_id: uuid.UUID, request: Request) -> dict[str, Any]:
+        """Kurator menyetujui varian: keluarga, induk, tertua yang dilaporkan, dan mutasi dihitung ulang."""
+        placement: PlacementService | None = request.app.state.deps.placement
+        if placement is None:
+            raise HTTPException(503, "Penempatan sedang tidak tersedia")
+        user = subject(request)
+        if user is None:
+            raise HTTPException(401, "Login sebagai kurator diperlukan")
+        if await run(placement.repo.role_of, user) not in ("curator", "admin"):
+            raise HTTPException(403, "Hanya kurator atau admin yang boleh menyetujui")
+        plan = await run(placement.place, str(variant_id))
+        node = next(n for n in plan.nodes if n.id == str(variant_id))
+        log.info(
+            "varian disetujui keluarga_baru=%s saran_gabung=%d confidence=%s",
+            plan.new_family,
+            len(plan.merge_suggestion),
+            node.edge_confidence,
+        )
+        return {
+            "variant_id": node.id,
+            "family_id": plan.family_id,
+            "new_family": plan.new_family,
+            "merge_suggestion": list(plan.merge_suggestion),
+            "parent_id": node.parent_id,
+            "edge_similarity": node.edge_similarity,
+            "edge_confidence": node.edge_confidence,
+            "alt_parent_ids": list(node.alt_parent_ids),
+            "mutation_summary": node.mutation_summary,
+            # "tertua yang dilaporkan" selalu disertai ketidakpastiannya
+            "oldest_reported": {
+                "variant_id": plan.oldest.id,
+                "first_seen_reported_at": plan.oldest.first_seen.isoformat(),
+                "date_precision": plan.oldest.date_precision,
+                "report_count": plan.oldest.report_count,
+            },
+        }
 
     return app

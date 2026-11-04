@@ -18,6 +18,9 @@ class Settings:
     cors_origins: tuple[str, ...] = field(default=("http://localhost:3000",))
     rate_limit_per_hour: int = 20
     submit_timeout_s: float = 30.0
+    # Dari sapuan grid `make eval` (docs/EVAL.md), bukan tebakan.
+    placement_sim_family: float = 0.60
+    placement_sim_edge: float = 0.85
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -35,4 +38,6 @@ class Settings:
             ),
             rate_limit_per_hour=int(env.get("RATE_LIMIT_PER_HOUR", cls.rate_limit_per_hour)),
             submit_timeout_s=float(env.get("SUBMIT_TIMEOUT_S", cls.submit_timeout_s)),
+            placement_sim_family=float(env.get("PLACEMENT_SIM_FAMILY", cls.placement_sim_family)),
+            placement_sim_edge=float(env.get("PLACEMENT_SIM_EDGE", cls.placement_sim_edge)),
         )
