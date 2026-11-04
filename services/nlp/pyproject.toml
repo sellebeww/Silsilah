@@ -12,6 +12,7 @@ dependencies = [
     "pillow>=13.0.0",
     "pyjwt[crypto]>=2.15.1",
     "python-multipart>=0.0.33",
+    "pyyaml>=6.0.3",
     "sentence-transformers>=6.2.0",
     "torch>=2.6",
     "transformers>=4.45",
@@ -19,7 +20,12 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = ["pytest>=8", "ruff>=0.6", "mypy>=1.11"]
+dev = [
+    "pytest>=8",
+    "ruff>=0.6",
+    "mypy>=1.11",
+    "types-pyyaml>=6.0.12.20261103",
+]
 
 # Linux (Docker) memakai wheel torch CPU agar image tidak membawa pustaka CUDA.
 [tool.uv.sources]
@@ -48,6 +54,7 @@ ignore = ["SIM905"]  # daftar kata ditulis sebagai "a b c".split() agar mudah di
 [tool.ruff.lint.per-file-ignores]
 # karakter mirip-ASCII (digit fullwidth, en dash) disengaja: itulah yang dideteksi/diuji
 "src/silsilah/anonymizer/*" = ["RUF001"]
+"src/silsilah/phylogeny/*" = ["RUF001"]
 "tests/anonymizer/*" = ["RUF001", "E501"]
 "scripts/*" = ["E501"]  # teks contoh sintetis panjang
 

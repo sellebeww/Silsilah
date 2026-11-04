@@ -1,0 +1,61 @@
+# Kata kunci klasifikasi mutasi (huruf kecil). Diubah di sini, bukan di kode.
+# Urutan prioritas kategori ada di diff.py: url > date > institution > place > number > call_to_action > other,
+# kecuali perubahan berupa klausa (>= 4 kata) yang memuat ajakan: langsung call_to_action.
+
+url:
+  markers: ["http://", "https://", "www.", "bit.ly", "s.id", "[tautan]", "[link_wa]", "[link_grup]"]
+  tlds: ["com", "id", "net", "org", "co", "info", "ly", "me", "xyz"]
+
+date:
+  words: [
+    senin, selasa, rabu, kamis, jumat, "jum'at", sabtu, minggu, ahad,
+    januari, februari, maret, april, mei, juni, juli, agustus, september, oktober, november, desember,
+    jan, feb, mar, apr, jun, jul, agu, agt, sep, okt, nov, des,
+    tanggal, tgl, hari, besok, lusa, kemarin, kemaren, nanti, malam, pagi, siang, sore, pukul, jam,
+    wib, wita, wit, bulan, tahun, pekan,
+    sesuk, wingi, isuk, bengi, enjing, dinten, poe, isukan, kamari,
+  ]
+  # kata di sebelah angka yang menandakan angka itu tanggal: "tanggal [20] Juli". Bukan "hari"/"minggu"
+  # (durasi: "selama [5] hari" adalah angka).
+  context_words: [
+    tanggal, tgl,
+    januari, februari, maret, april, mei, juni, juli, agustus, september, oktober, november, desember,
+    jan, feb, mar, apr, jun, jul, agu, agt, sep, okt, nov, des,
+  ]
+
+institution:
+  # kata pembuka nama lembaga: "Kementerian X", "Bank X", "RS X"
+  prefixes: [
+    kementerian, kemenkes, kemensos, kementrian, dinas, badan, lembaga, komisi, dewan, majelis,
+    bank, rs, rsud, rsup, "rumah sakit", puskesmas, klinik, universitas, univ, institut, sekolah,
+    pt, cv, yayasan, koperasi, perusahaan, pemerintah, pemkot, pemkab, pemprov, pemda,
+    polda, polres, polsek, kodim, koramil, satgas, toko, apotek, profesor, prof, dokter, dr,
+  ]
+  names: [
+    bpom, who, unicef, unesco, pbb, mui, kpk, ojk, bi, bmkg, bnpb, bpbd, basarnas, bpjs, pln, pdam,
+    kpu, bawaslu, dpr, dprd, polri, tni, kominfo, komdigi,
+  ]
+
+place:
+  prefixes: [
+    kota, kabupaten, kab, provinsi, prov, desa, kelurahan, kecamatan, kampung, dusun, pulau,
+    jalan, jl, jln, perumahan, komplek, kompleks, pasar, terminal, stasiun, wilayah, daerah, seluruh,
+    kutha, kampong,
+  ]
+
+number:
+  words: [
+    nol, satu, dua, tiga, empat, lima, enam, tujuh, delapan, sembilan, sepuluh, sebelas, seratus, seribu,
+    sejuta, puluh, ratus, ribu, rb, juta, jt, miliar, milyar, triliun, rp, rupiah, persen, kali, lipat, x,
+    siji, loro, telu, papat, limo, sewu, sayuta,
+  ]
+
+call_to_action:
+  words: [
+    sebarkan, sebar, share, forward, teruskan, terusno, terusake, bagikan, viralkan, segera, buruan, cepat,
+    jangan, ojo, klik, hubungi, kontak, transfer, daftar, daftarkan, kirim, kirimkan, wajib, tolong,
+    mohon, ayo, yuk, waspada, hindari, tarik, simpan, cek, isi, gabung, join, beritahu, kabari,
+    infokan, sampaikan, punten, bantu, jaga, awas, hati-hati, langsung, sekarang,
+  ]
+  # imperatif berimbuhan di awal klausa: "Bagikan", "Kirimkanlah"
+  imperative_suffixes: [kan, lah, kanlah]
