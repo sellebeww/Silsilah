@@ -29,7 +29,7 @@
 
 1. **OCR.** Gambar dibaca ke memori (batas ukuran dan tipe MIME diperiksa), di-OCR, lalu referensinya dibuang. Tidak ada penulisan ke disk atau Supabase Storage.
 2. **Normalisasi.** Unicode NFKC dan perapian whitespace. Teks hasil normalisasi adalah yang dianonimkan dan ditampilkan.
-3. **Anonimisasi.** Pola regex (nomor telepon Indonesia `+62/08`, email, NIK 16 digit, nomor rekening, pelat nomor, URL dengan parameter pelacak) ditambah NER untuk nama orang. Diganti placeholder bertipe. Fail-closed: exception atau timeout = submission ditolak.
+3. **Anonimisasi** (rinci di `ANONYMIZATION.md`). Pola regex (nomor telepon Indonesia `+62/08`, email, NIK 16 digit, nomor rekening, pelat nomor, URL dengan parameter pelacak) ditambah NER untuk nama orang. Diganti placeholder bertipe. Fail-closed: exception atau timeout = submission ditolak.
 4. **Embedding.** Hanya dari teks tersamar. Prefiks sesuai model (e5: `query: `). Dimensi dari `EMBEDDING_DIM`.
 5. **Penempatan.**
    - `sha256(teks tersamar ternormalisasi)` sama → laporan ulang varian yang ada (`report_count++`).

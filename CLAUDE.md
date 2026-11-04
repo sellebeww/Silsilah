@@ -50,7 +50,7 @@ Folder di atas dibuat bertahap sesuai `docs/ROADMAP.md`; belum semuanya ada.
 # Setup
 supabase start                              # Postgres lokal + Auth
 supabase db reset                           # terapkan migrasi + seed sintetis
-(cd services/nlp && uv sync)
+(cd services/nlp && uv sync --extra ner)    # model NER (~440 MB) terunduh saat pertama dipakai
 (cd apps/web && npm install)
 brew install tesseract tesseract-lang       # macOS; butuh paket bahasa ind
 
@@ -75,6 +75,8 @@ supabase test db tests/db                   # tes RLS (pgTAP)
 | `EMBEDDING_MODEL` | `intfloat/multilingual-e5-small` | Ganti model = migrasi re-embed |
 | `EMBEDDING_DIM` | `384` | Harus sama dengan kolom `vector(n)` |
 | `OCR_LANGS` | `ind+eng` | |
+| `NER_MODEL` | `cahya/bert-base-indonesian-NER` | Model gagal dimuat = anonimisasi ditolak |
+| `NER_THRESHOLD` | `0.5` | Turunkan untuk recall lebih tinggi |
 | `PLACEMENT_SIM_DUPLICATE` | `0.95` | ≥ ini: laporan ulang varian yang sama |
 | `PLACEMENT_SIM_FAMILY` | `0.80` | < ini: keluarga baru |
 | `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` | | Service role HANYA di `services/nlp`, tidak pernah di frontend |

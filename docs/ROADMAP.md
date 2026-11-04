@@ -15,13 +15,15 @@ Kriteria selesai tiap langkah: lihat "Definition of Done" di `CLAUDE.md`.
 - [x] Tes pgTAP `tests/db/rls.test.sql` (21 assertion).
 
 ## S2 Anonimisasi
-- [ ] Scaffold `services/nlp` (uv, ruff, mypy strict, pytest).
-- [ ] Normalisasi teks (NFKC, whitespace).
-- [ ] Regex: telepon Indonesia, email, NIK, rekening, pelat nomor, URL pelacak.
-- [ ] NER nama orang dengan fallback aman.
-- [ ] Placeholder bertipe; fail-closed bila error/timeout.
-- [ ] Fixture PII sintetis + tes, termasuk kasus campur bahasa daerah dan ejaan alay.
-- [ ] Filter log yang menolak field teks.
+- [x] Scaffold `services/nlp` (uv, ruff, mypy strict, pytest).
+- [x] Normalisasi teks (NFKC, zero-width, digit Unicode, keycap) dan `normalize_for_hash`.
+- [x] Regex: telepon, email (termasuk tersamar), NIK, rekening/kartu, handle, tautan WA/grup; query URL dibuang.
+- [x] Nama: heuristik sapaan/gelar + NER `cahya/bert-base-indonesian-NER`; lembaga dan jabatan dikecualikan.
+- [x] Placeholder bertipe; fail-closed (NER gagal/tidak ada, teks > 10.000 karakter, `assert_no_pii`).
+- [x] 67 kasus sintetis + 24 holdout; precision/recall di `docs/ANONYMIZATION.md`.
+- [x] Modul tanpa logging; error tidak memuat teks (diuji).
+- [ ] Pelat nomor dan alamat jalan: belum dideteksi (lihat keterbatasan di ANONYMIZATION.md).
+- [ ] Timeout per submission: diterapkan di S3 pada level endpoint.
 
 ## S3 Ingest (teks / OCR / embedding)
 - [ ] `POST /v1/submissions` untuk teks dan gambar (batas ukuran, tipe MIME).
