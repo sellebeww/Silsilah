@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import "./globals.css";
+import "../globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
@@ -20,6 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Link href="/">Keluarga</Link>
             <Link href="/kirim">Kirim pesan</Link>
             <Link href="/kurasi">Kurasi</Link>
+            <Link href="/embed">Sematkan</Link>
             <Link href="/hapus">Minta hapus</Link>
           </nav>
         </header>

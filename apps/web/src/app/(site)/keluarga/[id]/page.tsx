@@ -34,12 +34,14 @@ export default async function FamilyPage({ params }: Props) {
       </p>
       {f.factcheck_links.length > 0 && (
         <section aria-labelledby="fc">
-          <h2 id="fc">Pemeriksaan fakta resmi</h2>
+          <h2 id="fc">Hasil pemeriksaan fakta resmi</h2>
           <ul>
             {f.factcheck_links.map((l) => (
               <li key={l.id}>
-                <a href={l.url} rel="noopener noreferrer">{l.title}</a> ({l.publisher}
-                {l.verdict_label ? `, ${l.verdict_label}` : ""})
+                <strong>{l.publisher_name}</strong>
+                {l.verdict_label && <> · <span className="badge">{l.verdict_label}</span></>}
+                <br />
+                <a href={l.url} rel="noopener noreferrer nofollow" target="_blank">{l.title}</a>
               </li>
             ))}
           </ul>

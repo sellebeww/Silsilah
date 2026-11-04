@@ -30,6 +30,8 @@ export interface FactcheckLink {
   publisher: string;
   title: string;
   verdict_label: string | null;
+  /** Nama penerbit dari trusted_publishers (bukan dari input pengguna). */
+  publisher_name: string;
 }
 
 export interface FamilySummary {

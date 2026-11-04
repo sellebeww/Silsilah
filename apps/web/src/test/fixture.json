@@ -1,103 +1,117 @@
 {
- "families": [
-  {
-   "id": "f000000a-0000-0000-0000-000000000000",
-   "title": "Klaim bantuan tunai dari lembaga fiktif",
-   "created_at": "2026-01-06T00:00:00Z"
-  }
- ],
- "variants": [
-  {
-   "id": "aaaaaaaa-0000-0000-0000-000000000001",
-   "family_id": "f000000a-0000-0000-0000-000000000000",
-   "parent_id": null,
-   "body_anonymized": "INFO PENTING!! Lembaga Rekaan Sejahtera membagikan bantuan tunai Rp 500.000 untuk setiap keluarga di Kota Lamunan. Daftar sebelum hari Jumat lewat [TAUTAN]. Sebarkan ke 5 grup supaya semua kebagian.",
-   "first_seen_reported_at": "2026-01-05",
-   "date_precision": "day",
-   "report_count": 3,
-   "is_oldest_reported": true,
-   "edge_similarity": null,
-   "edge_confidence": null,
-   "alt_parent_ids": [],
-   "mutation_summary": null
-  },
-  {
-   "id": "aaaaaaaa-0000-0000-0000-000000000002",
-   "family_id": "f000000a-0000-0000-0000-000000000000",
-   "parent_id": "aaaaaaaa-0000-0000-0000-000000000001",
-   "body_anonymized": "INFO PENTING!! Lembaga Rekaan Sejahtera membagikan bantuan tunai Rp 1.000.000 untuk setiap keluarga di Kota Lamunan. Daftar sebelum hari Jumat lewat [TAUTAN]. Sebarkan ke 5 grup supaya semua kebagian.",
-   "first_seen_reported_at": "2026-02-01",
-   "date_precision": "month",
-   "report_count": 7,
-   "is_oldest_reported": false,
-   "edge_similarity": 0.96,
-   "edge_confidence": "high",
-   "alt_parent_ids": [],
-   "mutation_summary": null
-  },
-  {
-   "id": "aaaaaaaa-0000-0000-0000-000000000003",
-   "family_id": "f000000a-0000-0000-0000-000000000000",
-   "parent_id": "aaaaaaaa-0000-0000-0000-000000000002",
-   "body_anonymized": "INFO PENTING!! Kementerian Urusan Awan membagikan bantuan tunai Rp 1.000.000 untuk setiap keluarga di Kota Lamunan. Daftar sebelum hari Jumat lewat [TAUTAN]. Sebarkan ke 5 grup supaya semua kebagian.",
-   "first_seen_reported_at": "2026-02-14",
-   "date_precision": "day",
-   "report_count": 4,
-   "is_oldest_reported": false,
-   "edge_similarity": 0.91,
-   "edge_confidence": "high",
-   "alt_parent_ids": [],
-   "mutation_summary": null
-  },
-  {
-   "id": "aaaaaaaa-0000-0000-0000-000000000004",
-   "family_id": "f000000a-0000-0000-0000-000000000000",
-   "parent_id": "aaaaaaaa-0000-0000-0000-000000000001",
-   "body_anonymized": "INFO PENTING!! Lembaga Rekaan Sejahtera membagikan bantuan tunai Rp 1.000.000 untuk setiap keluarga di seluruh Provinsi Andaikata. Daftar sebelum hari Jumat lewat [TAUTAN]. Sebarkan ke 5 grup supaya semua kebagian.",
-   "first_seen_reported_at": "2026-01-01",
-   "date_precision": "year",
-   "report_count": 1,
-   "is_oldest_reported": false,
-   "edge_similarity": 0.7,
-   "edge_confidence": "low",
-   "alt_parent_ids": [],
-   "mutation_summary": null
-  }
- ],
- "mutations": [
-  {
-   "id": "bbbbbbbb-0000-0000-0000-000000000001",
-   "variant_id": "aaaaaaaa-0000-0000-0000-000000000002",
-   "parent_variant_id": "aaaaaaaa-0000-0000-0000-000000000001",
-   "category": "number",
-   "before_text": "Rp 500.000",
-   "after_text": "Rp 1.000.000"
-  },
-  {
-   "id": "bbbbbbbb-0000-0000-0000-000000000002",
-   "variant_id": "aaaaaaaa-0000-0000-0000-000000000003",
-   "parent_variant_id": "aaaaaaaa-0000-0000-0000-000000000002",
-   "category": "institution",
-   "before_text": "Lembaga Rekaan Sejahtera",
-   "after_text": "Kementerian Urusan Awan"
-  },
-  {
-   "id": "bbbbbbbb-0000-0000-0000-000000000003",
-   "variant_id": "aaaaaaaa-0000-0000-0000-000000000004",
-   "parent_variant_id": "aaaaaaaa-0000-0000-0000-000000000001",
-   "category": "place",
-   "before_text": "Kota Lamunan",
-   "after_text": "seluruh Provinsi Andaikata"
-  }
- ],
- "factcheck_links": [
-  {
-   "id": "cccccccc-0000-0000-0000-000000000001",
-   "family_id": "f000000a-0000-0000-0000-000000000000",
-   "url": "https://cekfakta.example/artikel/bantuan-tunai-lembaga-rekaan",
-   "publisher": "cekfakta.example",
-   "title": "[SINTETIS] Lembaga Rekaan Sejahtera tidak pernah membagikan bantuan tunai",
-   "verdict_label": "Hoaks"
-  }
- ]
+  "families": [
+    {
+      "id": "f000000a-0000-0000-0000-000000000000",
+      "title": "Klaim bantuan tunai dari lembaga fiktif",
+      "created_at": "2026-01-06T00:00:00Z"
+    }
+  ],
+  "variants": [
+    {
+      "id": "aaaaaaaa-0000-0000-0000-000000000001",
+      "family_id": "f000000a-0000-0000-0000-000000000000",
+      "parent_id": null,
+      "body_anonymized": "INFO PENTING!! Lembaga Rekaan Sejahtera membagikan bantuan tunai Rp 500.000 untuk setiap keluarga di Kota Lamunan. Daftar sebelum hari Jumat lewat [TAUTAN]. Sebarkan ke 5 grup supaya semua kebagian.",
+      "first_seen_reported_at": "2026-01-05",
+      "date_precision": "day",
+      "report_count": 3,
+      "is_oldest_reported": true,
+      "edge_similarity": null,
+      "edge_confidence": null,
+      "alt_parent_ids": [],
+      "mutation_summary": null
+    },
+    {
+      "id": "aaaaaaaa-0000-0000-0000-000000000002",
+      "family_id": "f000000a-0000-0000-0000-000000000000",
+      "parent_id": "aaaaaaaa-0000-0000-0000-000000000001",
+      "body_anonymized": "INFO PENTING!! Lembaga Rekaan Sejahtera membagikan bantuan tunai Rp 1.000.000 untuk setiap keluarga di Kota Lamunan. Daftar sebelum hari Jumat lewat [TAUTAN]. Sebarkan ke 5 grup supaya semua kebagian.",
+      "first_seen_reported_at": "2026-02-01",
+      "date_precision": "month",
+      "report_count": 7,
+      "is_oldest_reported": false,
+      "edge_similarity": 0.96,
+      "edge_confidence": "high",
+      "alt_parent_ids": [],
+      "mutation_summary": null
+    },
+    {
+      "id": "aaaaaaaa-0000-0000-0000-000000000003",
+      "family_id": "f000000a-0000-0000-0000-000000000000",
+      "parent_id": "aaaaaaaa-0000-0000-0000-000000000002",
+      "body_anonymized": "INFO PENTING!! Kementerian Urusan Awan membagikan bantuan tunai Rp 1.000.000 untuk setiap keluarga di Kota Lamunan. Daftar sebelum hari Jumat lewat [TAUTAN]. Sebarkan ke 5 grup supaya semua kebagian.",
+      "first_seen_reported_at": "2026-02-14",
+      "date_precision": "day",
+      "report_count": 4,
+      "is_oldest_reported": false,
+      "edge_similarity": 0.91,
+      "edge_confidence": "high",
+      "alt_parent_ids": [],
+      "mutation_summary": null
+    },
+    {
+      "id": "aaaaaaaa-0000-0000-0000-000000000004",
+      "family_id": "f000000a-0000-0000-0000-000000000000",
+      "parent_id": "aaaaaaaa-0000-0000-0000-000000000001",
+      "body_anonymized": "INFO PENTING!! Lembaga Rekaan Sejahtera membagikan bantuan tunai Rp 1.000.000 untuk setiap keluarga di seluruh Provinsi Andaikata. Daftar sebelum hari Jumat lewat [TAUTAN]. Sebarkan ke 5 grup supaya semua kebagian.",
+      "first_seen_reported_at": "2026-01-01",
+      "date_precision": "year",
+      "report_count": 1,
+      "is_oldest_reported": false,
+      "edge_similarity": 0.7,
+      "edge_confidence": "low",
+      "alt_parent_ids": [],
+      "mutation_summary": null
+    }
+  ],
+  "mutations": [
+    {
+      "id": "bbbbbbbb-0000-0000-0000-000000000001",
+      "variant_id": "aaaaaaaa-0000-0000-0000-000000000002",
+      "parent_variant_id": "aaaaaaaa-0000-0000-0000-000000000001",
+      "category": "number",
+      "before_text": "Rp 500.000",
+      "after_text": "Rp 1.000.000"
+    },
+    {
+      "id": "bbbbbbbb-0000-0000-0000-000000000002",
+      "variant_id": "aaaaaaaa-0000-0000-0000-000000000003",
+      "parent_variant_id": "aaaaaaaa-0000-0000-0000-000000000002",
+      "category": "institution",
+      "before_text": "Lembaga Rekaan Sejahtera",
+      "after_text": "Kementerian Urusan Awan"
+    },
+    {
+      "id": "bbbbbbbb-0000-0000-0000-000000000003",
+      "variant_id": "aaaaaaaa-0000-0000-0000-000000000004",
+      "parent_variant_id": "aaaaaaaa-0000-0000-0000-000000000001",
+      "category": "place",
+      "before_text": "Kota Lamunan",
+      "after_text": "seluruh Provinsi Andaikata"
+    }
+  ],
+  "factcheck_links": [
+    {
+      "id": "cccccccc-0000-0000-0000-000000000001",
+      "family_id": "f000000a-0000-0000-0000-000000000000",
+      "url": "https://cekfakta.example/artikel/bantuan-tunai-lembaga-rekaan",
+      "publisher": "cekfakta.example",
+      "title": "[SINTETIS] Lembaga Rekaan Sejahtera tidak pernah membagikan bantuan tunai",
+      "verdict_label": "Hoaks"
+    },
+    {
+      "id": "cccccccc-0000-0000-0000-000000000002",
+      "family_id": "f000000a-0000-0000-0000-000000000000",
+      "url": "https://jahat.example/iklan",
+      "publisher": "jahat.example",
+      "title": "[SINTETIS] Tautan di luar daftar penerbit",
+      "verdict_label": null
+    }
+  ],
+  "trusted_publishers": [
+    {
+      "domain": "cekfakta.example",
+      "name": "Pemeriksa Fakta Contoh (sintetis)"
+    }
+  ]
 }

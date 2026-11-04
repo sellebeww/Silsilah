@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { CATEGORY_STYLE, contrast, formatDate } from "./format";
-import { matchPublisher } from "./publishers";
+import { matchPublisher, trustedLinks } from "./publishers";
 import { buildTree } from "./tree";
 import fixture from "@/test/fixture.json";
 import type { Variant } from "./types";
@@ -43,4 +43,20 @@ describe("buildTree", () => {
     expect(root.children[0].variant.id).toBe(orphan.id);
   });
   it("kosong -> null", () => expect(buildTree([])).toBeNull());
+});
+
+describe("trustedLinks", () => {
+  const pubs = [{ domain: "turnbackhoax.id", name: "TurnBackHoax (MAFINDO)" }];
+  const link = (url: string, publisher = "turnbackhoax.id") => ({ id: url, url, publisher, title: "t", verdict_label: null });
+  it("menyertakan nama penerbit dari daftar resmi", () => {
+    const [l] = trustedLinks([link("https://turnbackhoax.id/a")], pubs);
+    expect(l.publisher_name).toBe("TurnBackHoax (MAFINDO)");
+  });
+  it("membuang penerbit tak terdaftar, domain tak cocok, dan non-https", () => {
+    const out = trustedLinks(
+      [link("https://jahat.example/a", "jahat.example"), link("https://jahat.example/a"), link("http://turnbackhoax.id/a"), link("javascript:alert(1)")],
+      pubs,
+    );
+    expect(out).toEqual([]);
+  });
 });

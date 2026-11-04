@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { UUID_RE } from "./uuid";
+import { trustedLinks } from "./publishers";
 import type { FamilyDetail, FamilySummary } from "./types";
 
 // Hanya anon key: RLS membatasi ke keluarga published dan varian approved.
@@ -40,7 +41,7 @@ export async function listFamilies(q = "", sort: SortKey = "terbaru"): Promise<F
 export async function getFamily(id: string): Promise<FamilyDetail | null> {
   if (!UUID_RE.test(id)) return null;
   const c = db();
-  const [fam, vars, links] = await Promise.all([
+  const [fam, vars, links, pubs] = await Promise.all([
     c.from("families").select("id,title").eq("id", id),
     c
       .from("variants")
@@ -50,8 +51,9 @@ export async function getFamily(id: string): Promise<FamilyDetail | null> {
       .eq("family_id", id)
       .order("first_seen_reported_at"),
     c.from("factcheck_links").select("id,url,publisher,title,verdict_label").eq("family_id", id),
+    c.from("trusted_publishers").select("domain,name"),
   ]);
-  if (fam.error || vars.error || links.error) throw new Error("Gagal memuat keluarga");
+  if (fam.error || vars.error || links.error || pubs.error) throw new Error("Gagal memuat keluarga");
   if (!fam.data?.length) return null;
   const ids = vars.data.map((v) => v.id);
   const muts = ids.length
@@ -62,6 +64,6 @@ export async function getFamily(id: string): Promise<FamilyDetail | null> {
     ...fam.data[0],
     variants: vars.data as FamilyDetail["variants"],
     mutations: muts.data as FamilyDetail["mutations"],
-    factcheck_links: links.data,
+    factcheck_links: trustedLinks(links.data, pubs.data),
   };
 }
