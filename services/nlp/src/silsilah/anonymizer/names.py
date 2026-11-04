@@ -47,6 +47,7 @@ def _word_end(m: re.Match[str]) -> int:
 def _name_after(text: str, pos: int, allow_lowercase: bool) -> tuple[int, int] | None:
     """Rentang nama sesudah sapaan: maks 4 kata kapital, berhenti di kata jabatan/lembaga/umum."""
     start = end = -1
+    lowercase = 0
     while True:
         m = _WORD.match(text, pos)
         if not m:
@@ -57,15 +58,24 @@ def _name_after(text: str, pos: int, allow_lowercase: bool) -> tuple[int, int] |
             pass  # gelar bertumpuk tetap terlihat: "Prof. Dr. Ir. <nama>"
         elif _is_stop(word):
             break
-        elif word[0].isupper():
+        elif word[0].isupper() and not lowercase:
             start = m.start() if start < 0 else start
             end = _word_end(m)
             if text[start:end].count(" ") >= _MAX_NAME_WORDS - 1:
                 break
         elif bare in NAME_CONNECTORS and start >= 0:
             pass  # "bin", "van": hanya disertakan bila diikuti kata kapital
-        elif start < 0 and allow_lowercase and len(bare) >= 3 and bare.isalpha():
-            return m.start(), m.end() - (1 if word.endswith(".") else 0)
+        elif (
+            allow_lowercase
+            and (start < 0 or lowercase)
+            and lowercase < 2
+            and len(bare) >= 3
+            and bare.isalpha()
+        ):
+            # chat huruf kecil ("pak sutrisno wibowo"): maks 2 kata, berhenti di kata umum
+            start = m.start() if start < 0 else start
+            end = _word_end(m)
+            lowercase += 1
         else:
             break
         gap = _GAP.match(text, m.end())

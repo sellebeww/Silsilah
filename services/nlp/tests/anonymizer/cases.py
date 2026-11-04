@@ -101,6 +101,13 @@ CASES = [
         ["menyarankan minum air garam"],
     ),
     c("name-lowercase", "td pak joko blg besok libur", [(P, "joko")], ["besok libur"]),
+    # ditemukan saat uji integrasi S3: nama dua kata huruf kecil sempat bocor separuh
+    c(
+        "name-lowercase-two",
+        "kata pak sutrisno wibowo besok libur",
+        [(P, "sutrisno wibowo")],
+        ["besok libur"],
+    ),
     c("name-two", "Mbak Ayu dan Mas Bagus Prakoso ikut", [(P, "Ayu"), (P, "Bagus Prakoso")], ["ikut"]),
     c(
         "name-titles",
