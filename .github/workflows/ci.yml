@@ -1,0 +1,134 @@
+# Copyright (c) 2026 Vassel Goleyu. All rights reserved.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  hygiene:
+    name: Higiene (secret, log PII)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/check_hygiene.py --selftest
+      - run: python3 scripts/check_hygiene.py
+
+  nlp:
+    name: NLP (ruff, mypy, pytest)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: services/nlp
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: services/nlp/uv.lock
+      - name: Tesseract (agar tes OCR asli ikut jalan)
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-ind tesseract-ocr-eng
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: hf-${{ hashFiles('services/nlp/pyproject.toml') }}
+      - run: uv sync --frozen
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run mypy src tests scripts
+      - run: uv run pytest -q -p no:cacheprovider
+
+  eval:
+    name: make eval (hanya melaporkan, tidak menggagalkan)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    defaults:
+      run:
+        working-directory: services/nlp
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: services/nlp/uv.lock
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: hf-${{ hashFiles('services/nlp/pyproject.toml') }}
+      - run: uv sync --frozen
+      - run: make eval
+        continue-on-error: true
+      - name: Ringkasan hasil
+        if: always()
+        working-directory: .
+        run: |
+          if [ -f docs/EVAL.md ]; then cat docs/EVAL.md >> "$GITHUB_STEP_SUMMARY"; else echo "make eval tidak menghasilkan docs/EVAL.md" >> "$GITHUB_STEP_SUMMARY"; fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: eval
+          path: docs/EVAL.md
+          if-no-files-found: ignore
+
+  web:
+    name: Web (eslint, tsc, vitest, build)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: anon-ci-placeholder
+      NEXT_PUBLIC_NLP_URL: http://localhost:8000
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      # shortcut: package-lock.json belum memuat devDependencies (dibuat tanpa jaringan); setelah
+      # `npm install` dijalankan online dan lockfile di-commit, ganti dengan `npm ci`.
+      - run: npm install --no-audit --no-fund
+      - run: npm run lint
+      - run: npx tsc --noEmit
+      - run: npm test
+      - run: npm run build
+
+  db:
+    name: "Basis data (pgTAP, skema dan RLS)"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - run: supabase start
+      - run: supabase test db tests/db
+
+  audit:
+    name: Audit dependensi
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: astral-sh/setup-uv@v5
+      - name: npm audit (high ke atas)
+        working-directory: apps/web
+        run: npm install --package-lock-only --no-audit --no-fund && npm audit --audit-level=high
+      - name: pip-audit
+        working-directory: services/nlp
+        # torch dikecualikan: varian "+cpu" dari indeks PyTorch tidak dikenal basis data kerentanan PyPI.
+        run: |
+          uv export --frozen --no-dev --no-hashes --no-emit-project --no-emit-package torch -o "$RUNNER_TEMP/req.txt"
+          uvx pip-audit -r "$RUNNER_TEMP/req.txt" --no-deps --disable-pip
