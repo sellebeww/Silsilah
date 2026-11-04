@@ -31,6 +31,8 @@ function Dashboard({ auth }: { auth: Auth }) {
     setSuggest(s.data as Suggest[]);
     setDomains(d.data.map((r) => r.domain));
   }, []);
+  // Pengambilan data awal: setState terjadi setelah await, bukan sinkron; aturan lint terlalu konservatif di sini.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { void load(); }, [load]);
 
   const title = (id: string) => fams.find((f) => f.id === id)?.title ?? id;

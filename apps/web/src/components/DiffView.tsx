@@ -1,8 +1,11 @@
-import { diffWords } from "diff";
+import { diffArrays } from "diff";
+
+// Token = kata dipisah spasi, agar "500.000" tidak terpecah di titik (sama dengan diff di services/nlp).
+const tokens = (s: string) => s.split(/(\s+)/).filter(Boolean);
 
 /** Dua kolom: induk (bagian yang hilang dicoret) dan anak (bagian baru digarisbawahi). Tidak hanya warna: ada coretan/garis bawah. */
 export function DiffView({ parent, child }: { parent: string; child: string }) {
-  const parts = diffWords(parent, child);
+  const parts = diffArrays(tokens(parent), tokens(child)).map((p) => ({ ...p, value: p.value.join("") }));
   return (
     <div className="diff" role="group" aria-label="Perbandingan dengan varian induk">
       <div>
