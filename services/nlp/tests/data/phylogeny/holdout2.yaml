@@ -1,0 +1,36 @@
+# Set HOLDOUT2 (bersih): ditulis setelah SEMUA aturan diff, desain penempatan, dan ambang dikunci, lalu
+# dijalankan sekali tanpa penyetelan lanjutan. holdout.yaml tidak lagi bersih karena kegagalannya memicu
+# perbaikan (lihat docs/EVAL.md). Format sama dengan tune.yaml. Semua teks, lembaga, dan tempat fiktif.
+variants:
+  # B1 beras plastik; satu varian bahasa Sunda hanya bertanggal "Juni"
+  - {id: B1a, family: B1, parent: null, first_seen: 2026-06-10, precision: day, order: 3, mutations: [],
+     text: "Waspada beras plastik beredar di Pasar Induk Kota Rekaan. Cirinya berkilau dan tidak hancur saat dimasak. Sudah 7 warga sakit perut. Cek beras di rumah masing-masing."}
+  - {id: B1b, family: B1, parent: B1a, first_seen: 2026-06-12, precision: day, order: 1, mutations: [number],
+     text: "Waspada beras plastik beredar di Pasar Induk Kota Rekaan. Cirinya berkilau dan tidak hancur saat dimasak. Sudah 15 warga sakit perut. Cek beras di rumah masing-masing."}
+  - {id: B1c, family: B1, parent: B1b, first_seen: 2026-06-13, precision: day, order: 2, mutations: [place],
+     text: "Waspada beras plastik beredar di Pasar Baru Kabupaten Lamunan. Cirinya berkilau dan tidak hancur saat dimasak. Sudah 15 warga sakit perut. Cek beras di rumah masing-masing."}
+  - {id: B1d, family: B1, parent: B1c, first_seen: 2026-06-15, precision: day, order: 4, mutations: [institution],
+     text: "Menurut Dinas Pangan Rekaan, waspada beras plastik beredar di Pasar Baru Kabupaten Lamunan. Cirinya berkilau dan tidak hancur saat dimasak. Sudah 15 warga sakit perut. Cek beras di rumah masing-masing."}
+  - {id: B1e, family: B1, parent: B1d, first_seen: 2026-06-16, precision: day, order: 5, mutations: [call_to_action],
+     text: "Menurut Dinas Pangan Rekaan, waspada beras plastik beredar di Pasar Baru Kabupaten Lamunan. Cirinya berkilau dan tidak hancur saat dimasak. Sudah 15 warga sakit perut. Cek beras di rumah masing-masing. Segera sebarkan ke grup ibu-ibu PKK!"}
+  - {id: B1f, family: B1, parent: B1c, first_seen: 2026-06-01, precision: month, order: 6, mutations: [], rewrite: true,
+     text: "Awas beas plastik aya di Pasar Baru Kabupaten Lamunan. Cirina hérang, teu ancur mun diasakan. Geus 15 urang nyeri beuteung. Cek beas di imah masing-masing."}
+  - {id: B1g, family: B1, parent: B1e, first_seen: 2026-06-18, precision: day, order: 7, mutations: [url],
+     text: "Menurut Dinas Pangan Rekaan, waspada beras plastik beredar di Pasar Baru Kabupaten Lamunan. Cirinya berkilau dan tidak hancur saat dimasak. Sudah 15 warga sakit perut. Cek beras di rumah masing-masing. Segera sebarkan ke grup ibu-ibu PKK! Video bukti: [TAUTAN]"}
+
+  # B2 tilang elektronik palsu; akar dilaporkan setelah tiga turunannya
+  - {id: B2a, family: B2, parent: null, first_seen: 2026-09-01, precision: day, order: 4, mutations: [],
+     text: "Pemberitahuan: kendaraan Anda terkena tilang elektronik di Jalan Merdeka Rekaan. Bayar denda Rp 500.000 paling lambat 3 hari melalui [TAUTAN] agar STNK tidak diblokir."}
+  - {id: B2b, family: B2, parent: B2a, first_seen: 2026-09-02, precision: day, order: 1, mutations: [number],
+     text: "Pemberitahuan: kendaraan Anda terkena tilang elektronik di Jalan Merdeka Rekaan. Bayar denda Rp 750.000 paling lambat 3 hari melalui [TAUTAN] agar STNK tidak diblokir."}
+  - {id: B2c, family: B2, parent: B2b, first_seen: 2026-09-03, precision: day, order: 2, mutations: [date],
+     text: "Pemberitahuan: kendaraan Anda terkena tilang elektronik di Jalan Merdeka Rekaan. Bayar denda Rp 750.000 paling lambat 24 jam melalui [TAUTAN] agar STNK tidak diblokir."}
+  - {id: B2d, family: B2, parent: B2c, first_seen: 2026-09-04, precision: day, order: 3, mutations: [institution],
+     text: "Pemberitahuan resmi Polda Rekaan: kendaraan Anda terkena tilang elektronik di Jalan Merdeka Rekaan. Bayar denda Rp 750.000 paling lambat 24 jam melalui [TAUTAN] agar STNK tidak diblokir."}
+  - {id: B2e, family: B2, parent: B2d, first_seen: 2026-09-01, precision: month, order: 6, mutations: skip,
+     text: "pemberitahuan resmi Polda Rekaan: kendaraan anda kena tilang elektronik di Jl. Merdeka Rekaan. byr denda Rp 750rb plg lambat 24 jam lwt [TAUTAN] biar STNK gk diblokir"}
+  - {id: B2f, family: B2, parent: B2d, first_seen: 2026-09-05, precision: day, order: 5, mutations: [url, call_to_action],
+     text: "Pemberitahuan resmi Polda Rekaan: kendaraan Anda terkena tilang elektronik di Jalan Merdeka Rekaan. Bayar denda Rp 750.000 paling lambat 24 jam melalui [LINK_WA] agar STNK tidak diblokir. Balas pesan ini segera!"}
+
+  - {id: N5, family: N5, parent: null, first_seen: 2026-09-02, precision: day, order: 3, mutations: [],
+     text: "Info kerja bakti hari Minggu jam 7 pagi di lapangan RW 03, bawa cangkul dan karung masing-masing."}

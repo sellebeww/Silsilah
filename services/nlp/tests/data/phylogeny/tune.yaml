@@ -1,0 +1,56 @@
+# Set TUNING untuk sapuan ambang (T_family, T_edge). Semua teks, lembaga, dan tempat fiktif.
+# order = urutan laporan/persetujuan (bukan urutan turunan). parent = induk SEBENARNYA.
+# mutations = kategori perubahan sebenarnya dari induk; "skip" = typo/singkatan (tidak dinilai);
+# rewrite = ditulis ulang (bahasa daerah), tidak dirinci.
+variants:
+  # T1 pemadaman listrik; akar baru dilaporkan setelah tiga turunannya
+  - {id: T1a, family: T1, parent: null, first_seen: 2026-02-03, precision: day, order: 4, mutations: [],
+     text: "PENGUMUMAN: Akan ada pemadaman listrik total di Kota Lamunan selama 3 hari mulai Senin. Siapkan lilin dan isi daya HP. Sebarkan ke keluarga dan tetangga."}
+  - {id: T1b, family: T1, parent: T1a, first_seen: 2026-02-06, precision: day, order: 1, mutations: [number],
+     text: "PENGUMUMAN: Akan ada pemadaman listrik total di Kota Lamunan selama 5 hari mulai Senin. Siapkan lilin dan isi daya HP. Sebarkan ke keluarga dan tetangga."}
+  - {id: T1c, family: T1, parent: T1b, first_seen: 2026-02-10, precision: day, order: 2, mutations: [institution],
+     text: "PENGUMUMAN RESMI Perusahaan Listrik Rekaan: Akan ada pemadaman listrik total di Kota Lamunan selama 5 hari mulai Senin. Siapkan lilin dan isi daya HP. Sebarkan ke keluarga dan tetangga."}
+  - {id: T1d, family: T1, parent: T1c, first_seen: 2026-02-15, precision: day, order: 6, mutations: [place, call_to_action],
+     text: "PENGUMUMAN RESMI Perusahaan Listrik Rekaan: Akan ada pemadaman listrik total di seluruh Provinsi Andaikata selama 5 hari mulai Senin. Siapkan lilin dan isi daya HP. Sebarkan ke keluarga dan tetangga. Wajib teruskan ke 10 grup WA sekarang juga!"}
+  - {id: T1e, family: T1, parent: T1b, first_seen: 2026-02-20, precision: day, order: 3, mutations: [], rewrite: true,
+     text: "Kabar penting: listrik ning Kota Lamunan bakal mati total limang dina wiwit Senen. Siapke lilin lan cas HP. Sebarno nang keluarga lan tonggo."}
+  - {id: T1f, family: T1, parent: T1d, first_seen: 2026-03-01, precision: month, order: 5, mutations: skip,
+     text: "pngumuman resmi Perusahaan Listrik Rekaan: akan ada pemadaman listrik total di seluruh Provinsi Andaikata slama 5 hr mulai senin. siapin lilin & isi daya hp. sebarkan ke keluarga dan tetangga. wajib terusin ke 10 grup WA skrg jg!!"}
+  - {id: T1g, family: T1, parent: T1c, first_seen: 2026-02-12, precision: day, order: 7, mutations: [other],
+     text: "Siapkan lilin dan isi daya HP. PENGUMUMAN RESMI Perusahaan Listrik Rekaan: Akan ada pemadaman listrik total di Kota Lamunan selama 5 hari mulai Senin. Sebarkan ke keluarga dan tetangga."}
+
+  # T2 air tercemar; akar hanya diketahui tahunnya
+  - {id: T2a, family: T2, parent: null, first_seen: 2025-01-01, precision: year, order: 3, mutations: [],
+     text: "Info dari grup RT: air dari Perusahaan Air Rekaan tercemar bakteri berbahaya sejak kemarin. Jangan diminum dan jangan dipakai masak selama 2 minggu. Rebus minimal 30 menit kalau terpaksa."}
+  - {id: T2b, family: T2, parent: T2a, first_seen: 2025-11-02, precision: day, order: 1, mutations: [number],
+     text: "Info dari grup RT: air dari Perusahaan Air Rekaan tercemar bakteri berbahaya sejak kemarin. Jangan diminum dan jangan dipakai masak selama 2 minggu. Rebus minimal 60 menit kalau terpaksa."}
+  - {id: T2c, family: T2, parent: T2b, first_seen: 2025-11-10, precision: day, order: 2, mutations: [institution],
+     text: "Info resmi Dinas Kesehatan: air dari Perusahaan Air Rekaan tercemar bakteri berbahaya sejak kemarin. Jangan diminum dan jangan dipakai masak selama 2 minggu. Rebus minimal 60 menit kalau terpaksa."}
+  - {id: T2d, family: T2, parent: T2c, first_seen: 2025-11-15, precision: day, order: 4, mutations: [call_to_action],
+     text: "Info resmi Dinas Kesehatan: air dari Perusahaan Air Rekaan tercemar bakteri berbahaya sejak kemarin. Jangan diminum dan jangan dipakai masak selama 2 minggu. Rebus minimal 60 menit kalau terpaksa. Segera bagikan ke semua grup keluarga sebelum terlambat!"}
+  - {id: T2e, family: T2, parent: T2d, first_seen: 2025-12-01, precision: month, order: 6, mutations: [], rewrite: true,
+     text: "Punten info ti Dinas Kesehatan: cai ti Perusahaan Air Rekaan kacemar bakteri bahaya ti kamari. Ulah diinum, ulah dipake masak salila 2 minggu. Kulub 60 menit lamun kapaksa. Gancang bagikeun ka sadaya grup kulawarga!"}
+  - {id: T2f, family: T2, parent: T2c, first_seen: 2025-11-20, precision: day, order: 5, mutations: [date],
+     text: "Info resmi Dinas Kesehatan: air dari Perusahaan Air Rekaan tercemar bakteri berbahaya sejak 3 hari lalu. Jangan diminum dan jangan dipakai masak selama 2 minggu. Rebus minimal 60 menit kalau terpaksa."}
+
+  # T3 penculikan anak; turunan pertama dilaporkan sebelum akarnya, satu varian bertanggal "bulan" sama dengan akar
+  - {id: T3a, family: T3, parent: null, first_seen: 2026-04-01, precision: day, order: 2, mutations: [],
+     text: "Hati-hati! Ada penculikan anak pakai mobil van putih di sekitar Pasar Kota Lamunan. Pelaku menyamar jadi penjual mainan. Jaga anak-anak kita, jangan biarkan main sendiri."}
+  - {id: T3b, family: T3, parent: T3a, first_seen: 2026-04-03, precision: day, order: 1, mutations: [other],
+     text: "Hati-hati! Ada penculikan anak pakai mobil van hitam di sekitar Pasar Kota Lamunan. Pelaku menyamar jadi penjual mainan. Jaga anak-anak kita, jangan biarkan main sendiri."}
+  - {id: T3c, family: T3, parent: T3b, first_seen: 2026-04-05, precision: day, order: 4, mutations: [place],
+     text: "Hati-hati! Ada penculikan anak pakai mobil van hitam di sekitar Terminal Kota Andaikata. Pelaku menyamar jadi penjual mainan. Jaga anak-anak kita, jangan biarkan main sendiri."}
+  - {id: T3d, family: T3, parent: T3c, first_seen: 2026-04-06, precision: day, order: 3, mutations: [number],
+     text: "Hati-hati! Ada penculikan anak pakai mobil van hitam di sekitar Terminal Kota Andaikata. Pelaku menyamar jadi penjual mainan. Sudah 4 anak hilang. Jaga anak-anak kita, jangan biarkan main sendiri."}
+  - {id: T3e, family: T3, parent: T3d, first_seen: 2026-04-09, precision: day, order: 6, mutations: [number],
+     text: "Hati-hati! Ada penculikan anak pakai mobil van hitam di sekitar Terminal Kota Andaikata. Pelaku menyamar jadi penjual mainan. Sudah 12 anak hilang. Jaga anak-anak kita, jangan biarkan main sendiri."}
+  - {id: T3f, family: T3, parent: T3e, first_seen: 2026-04-12, precision: day, order: 5, mutations: [institution, call_to_action],
+     text: "Hati-hati! Ada penculikan anak pakai mobil van hitam di sekitar Terminal Kota Andaikata. Pelaku menyamar jadi penjual mainan. Sudah 12 anak hilang. Jaga anak-anak kita, jangan biarkan main sendiri. Info dari Polsek Kota Andaikata. Sebarkan sekarang!"}
+  - {id: T3g, family: T3, parent: T3a, first_seen: 2026-04-01, precision: month, order: 7, mutations: skip,
+     text: "hati2!! ad penculikan ank pake mobil van putih di skitar Pasar Kota Lamunan. pelaku nyamar jd penjual mainan. jaga ank2 kita, jgn biarin main sndiri"}
+
+  # Pengganggu: tidak berkerabat dengan apa pun
+  - {id: N1, family: N1, parent: null, first_seen: 2026-03-03, precision: day, order: 3, mutations: [],
+     text: "Jadwal ronda malam RT 05 minggu ini: Senin Pak [NAMA], Selasa Pak [NAMA]. Mohon hadir tepat waktu di pos ronda."}
+  - {id: N2, family: N2, parent: null, first_seen: 2026-03-04, precision: day, order: 5, mutations: [],
+     text: "Resep rendang empuk: daging sapi 1 kg, santan 2 liter, bumbu halus, masak 4 jam dengan api kecil sambil diaduk."}

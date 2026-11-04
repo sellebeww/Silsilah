@@ -1,0 +1,51 @@
+# Set HOLDOUT: ditulis setelah aturan diff dan desain penempatan dikunci; tidak dipakai untuk menyetel ambang.
+# Format sama dengan tune.yaml. Semua teks, lembaga, dan tempat fiktif.
+variants:
+  # H1 undian berhadiah palsu
+  - {id: H1a, family: H1, parent: null, first_seen: 2026-07-01, precision: day, order: 3, mutations: [],
+     text: "Selamat! Nomor Anda terpilih sebagai pemenang undian Toko Serba Ada Makmur senilai Rp 25.000.000. Klaim hadiah lewat [TAUTAN] sebelum tanggal 20 Juli."}
+  - {id: H1b, family: H1, parent: H1a, first_seen: 2026-07-03, precision: day, order: 1, mutations: [number],
+     text: "Selamat! Nomor Anda terpilih sebagai pemenang undian Toko Serba Ada Makmur senilai Rp 50.000.000. Klaim hadiah lewat [TAUTAN] sebelum tanggal 20 Juli."}
+  - {id: H1c, family: H1, parent: H1b, first_seen: 2026-07-05, precision: day, order: 2, mutations: [date],
+     text: "Selamat! Nomor Anda terpilih sebagai pemenang undian Toko Serba Ada Makmur senilai Rp 50.000.000. Klaim hadiah lewat [TAUTAN] sebelum tanggal 25 Juli."}
+  - {id: H1d, family: H1, parent: H1c, first_seen: 2026-07-06, precision: day, order: 5, mutations: [url],
+     text: "Selamat! Nomor Anda terpilih sebagai pemenang undian Toko Serba Ada Makmur senilai Rp 50.000.000. Klaim hadiah lewat [LINK_WA] sebelum tanggal 25 Juli."}
+  - {id: H1e, family: H1, parent: H1b, first_seen: 2026-07-04, precision: day, order: 4, mutations: [institution],
+     text: "Selamat! Nomor Anda terpilih sebagai pemenang undian Bank Contoh Sentosa senilai Rp 50.000.000. Klaim hadiah lewat [TAUTAN] sebelum tanggal 20 Juli."}
+  - {id: H1f, family: H1, parent: H1e, first_seen: 2026-07-08, precision: day, order: 7, mutations: [call_to_action],
+     text: "Selamat! Nomor Anda terpilih sebagai pemenang undian Bank Contoh Sentosa senilai Rp 50.000.000. Klaim hadiah lewat [TAUTAN] sebelum tanggal 20 Juli. Jangan sampai hangus, segera transfer biaya admin Rp 150.000!"}
+  - {id: H1g, family: H1, parent: H1a, first_seen: 2026-07-01, precision: month, order: 6, mutations: skip,
+     text: "slmt! no anda terpilih jd pemenang undian Toko Serba Ada Makmur senilai Rp 25jt. klaim hadiah lwt [TAUTAN] sblm tgl 20 juli"}
+
+  # H2 peringatan badai palsu; akar dilaporkan paling akhir di antara cabang utamanya
+  - {id: H2a, family: H2, parent: null, first_seen: 2026-05-02, precision: day, order: 4, mutations: [],
+     text: "PERINGATAN DINI dari Badan Cuaca Rekaan: badai besar akan melanda pesisir Kabupaten Lamunan besok malam. Warga diminta mengungsi ke dataran tinggi."}
+  - {id: H2b, family: H2, parent: H2a, first_seen: 2026-05-03, precision: day, order: 1, mutations: [place],
+     text: "PERINGATAN DINI dari Badan Cuaca Rekaan: badai besar akan melanda pesisir Kabupaten Andaikata besok malam. Warga diminta mengungsi ke dataran tinggi."}
+  - {id: H2c, family: H2, parent: H2b, first_seen: 2026-05-04, precision: day, order: 2, mutations: [date],
+     text: "PERINGATAN DINI dari Badan Cuaca Rekaan: badai besar akan melanda pesisir Kabupaten Andaikata nanti sore. Warga diminta mengungsi ke dataran tinggi."}
+  - {id: H2d, family: H2, parent: H2c, first_seen: 2026-05-05, precision: day, order: 3, mutations: [call_to_action],
+     text: "PERINGATAN DINI dari Badan Cuaca Rekaan: badai besar akan melanda pesisir Kabupaten Andaikata nanti sore. Warga diminta mengungsi ke dataran tinggi. Bagikan info ini ke semua grup warga pesisir!"}
+  - {id: H2e, family: H2, parent: H2d, first_seen: 2026-05-01, precision: month, order: 6, mutations: [], rewrite: true,
+     text: "PENGUMUMAN saka Badan Cuaca Rekaan: badai gedhe bakal nekani pesisir Kabupaten Andaikata mengko sore. Warga dikon ngungsi menyang papan sing dhuwur. Bagekna info iki nang kabeh grup!"}
+  - {id: H2f, family: H2, parent: H2b, first_seen: 2026-05-06, precision: day, order: 5, mutations: [institution],
+     text: "PERINGATAN DINI dari Lembaga Antariksa Rekaan: badai besar akan melanda pesisir Kabupaten Andaikata besok malam. Warga diminta mengungsi ke dataran tinggi."}
+
+  # H3 jam malam palsu; satu varian singkatan hanya bertanggal "Agustus"
+  - {id: H3a, family: H3, parent: null, first_seen: 2026-08-10, precision: day, order: 2, mutations: [],
+     text: "Mulai malam ini diberlakukan jam malam di Kota Andaikata pukul 20.00 sampai 05.00. Warga yang keluar rumah akan didenda Rp 1.000.000 oleh Satgas Kota Andaikata."}
+  - {id: H3b, family: H3, parent: H3a, first_seen: 2026-08-11, precision: day, order: 1, mutations: [date],
+     text: "Mulai malam ini diberlakukan jam malam di Kota Andaikata pukul 18.00 sampai 05.00. Warga yang keluar rumah akan didenda Rp 1.000.000 oleh Satgas Kota Andaikata."}
+  - {id: H3c, family: H3, parent: H3b, first_seen: 2026-08-12, precision: day, order: 3, mutations: [number],
+     text: "Mulai malam ini diberlakukan jam malam di Kota Andaikata pukul 18.00 sampai 05.00. Warga yang keluar rumah akan didenda Rp 5.000.000 oleh Satgas Kota Andaikata."}
+  - {id: H3d, family: H3, parent: H3c, first_seen: 2026-08-13, precision: day, order: 5, mutations: [other],
+     text: "Warga yang keluar rumah akan didenda Rp 5.000.000 oleh Satgas Kota Andaikata. Mulai malam ini diberlakukan jam malam di Kota Andaikata pukul 18.00 sampai 05.00."}
+  - {id: H3e, family: H3, parent: H3c, first_seen: 2026-08-14, precision: day, order: 4, mutations: [call_to_action],
+     text: "Tolong sebarkan ke grup keluarga: Mulai malam ini diberlakukan jam malam di Kota Andaikata pukul 18.00 sampai 05.00. Warga yang keluar rumah akan didenda Rp 5.000.000 oleh Satgas Kota Andaikata."}
+  - {id: H3f, family: H3, parent: H3e, first_seen: 2026-08-01, precision: month, order: 6, mutations: skip,
+     text: "tlg sebarin ke grup kluarga: mulai mlm ini diberlakukan jam mlm di Kota Andaikata pkl 18.00 smpe 05.00. warga yg keluar rmh akn didenda Rp 5jt oleh Satgas Kota Andaikata"}
+
+  - {id: N3, family: N3, parent: null, first_seen: 2026-08-02, precision: day, order: 3, mutations: [],
+     text: "Pengumuman lomba 17 Agustus tingkat RT: lomba makan kerupuk dan balap karung, pendaftaran di pos ronda sampai hari Jumat."}
+  - {id: N4, family: N4, parent: null, first_seen: 2026-08-05, precision: day, order: 4, mutations: [],
+     text: "Kucing oren hilang di sekitar Perumahan Griya Rekaan, ciri-ciri kalung merah dan ekor pendek. Bila menemukan hubungi [TELEPON]."}
