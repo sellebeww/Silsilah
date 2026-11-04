@@ -58,6 +58,7 @@ brew install tesseract tesseract-lang       # macOS; butuh paket bahasa ind
 # Test
 supabase test db tests/db                   # tes RLS (pgTAP)
 (cd services/nlp && uv run pytest)
+(cd services/nlp && make eval)              # sapuan ambang + evaluasi pohon/diff -> docs/EVAL.md
 (cd apps/web && npm test)
 
 # Lint & tipe
@@ -81,8 +82,8 @@ docker build --target test services/nlp     # tes di dalam image, termasuk OCR T
 | `OCR_LANGS` | `ind+eng` | |
 | `NER_MODEL` | `cahya/bert-base-indonesian-NER` | Model gagal dimuat = anonimisasi ditolak |
 | `NER_THRESHOLD` | `0.5` | Turunkan untuk recall lebih tinggi |
-| `PLACEMENT_SIM_DUPLICATE` | `0.95` | ≥ ini: laporan ulang varian yang sama |
-| `PLACEMENT_SIM_FAMILY` | `0.80` | < ini: keluarga baru. Wajib dikalibrasi ulang di S4: dengan MiniLM, kemiripan intra-keluarga di seed serendah 0,50 |
+| `PLACEMENT_SIM_FAMILY` | `0.60` | Kemiripan ke centroid keluarga; < ini: keluarga baru. Dari sapuan `make eval` (docs/EVAL.md) |
+| `PLACEMENT_SIM_EDGE` | `0.85` | < ini: cabang dari akar dengan `edge_confidence=low`. Dari sapuan yang sama |
 | `RATE_LIMIT_PER_HOUR` | `20` | Per IP atau per kontributor (JWT); kunci di-HMAC, tidak disimpan |
 | `CORS_ORIGINS` | `http://localhost:3000` | Dipisah koma |
 | `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` | | Service role HANYA di `services/nlp`, tidak pernah di frontend |

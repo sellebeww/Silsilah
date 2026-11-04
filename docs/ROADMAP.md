@@ -36,12 +36,14 @@ Kriteria selesai tiap langkah: lihat "Definition of Done" di `CLAUDE.md`.
 - [ ] Dockerfile + docker-compose ditulis, tetapi build image dan tes OCR Tesseract asli BELUM terverifikasi (disk penuh saat S3).
 
 ## S4 Pohon + diff
-- [ ] Penempatan: hash persis → duplikat → anak → keluarga baru, ambang dari env.
-- [ ] Simpan `placement_confidence`; tandai penempatan ragu untuk kurator.
-- [ ] Hitung varian tertua yang dilaporkan per keluarga.
-- [ ] Diff kata deterministik terhadap induk.
-- [ ] Re-parent manual oleh kurator dengan validasi anti-siklus.
-- [ ] Set evaluasi sintetis kecil untuk mengukur kualitas clustering.
+- [x] Penempatan saat kurator menyetujui (`POST /moderation/variants/{id}/approve`): keluarga via centroid, induk, `edge_confidence`, `alt_parent_ids`, `merge_suggestion` (tanpa gabung otomatis).
+- [x] Pohon keluarga dihitung ulang penuh tiap penempatan: deterministik, idempoten, rebalance otomatis.
+- [x] `is_oldest_reported` + ketidakpastian (`date_precision`, `report_count`) di respons.
+- [x] Diff kata + kategori dari `keywords.yaml`, baris `mutations`, ringkasan satu baris.
+- [x] Dataset sintetis 8 keluarga + `make eval`; ambang dari sapuan grid (`docs/EVAL.md`).
+- [x] Tes: idempotensi, rebalance, ambiguitas, tanggal tidak presisi, keluarga yang hendak bergabung.
+- [ ] Migrasi `20261104000500_phylogeny.sql` + tes pgTAP ditulis, BELUM dijalankan (Docker tidak hidup, disk penuh).
+- [ ] Re-parent dan gabung keluarga manual oleh kurator (S5, UI kurator).
 
 ## S5 API + UI pohon
 - [ ] API baca: keluarga, pohon, varian, diff.

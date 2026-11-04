@@ -32,12 +32,12 @@
 3. **Anonimisasi** (rinci di `ANONYMIZATION.md`). Pola regex (nomor telepon Indonesia `+62/08`, email, NIK 16 digit, nomor rekening, pelat nomor, URL dengan parameter pelacak) ditambah NER untuk nama orang. Diganti placeholder bertipe. Fail-closed: exception atau timeout = submission ditolak.
 4. **Embedding.** Hanya dari teks tersamar, `paraphrase-multilingual-MiniLM-L12-v2` (384 dim, L2-normalized), dimuat sekali saat startup. Dipilih dengan `services/nlp/scripts/compare_embeddings.py`: pada seed, kemiripan antar-keluarga rata-rata 0,17 (e5-small: 0,83). Batas: input dipotong di 128 token. Duplikat persis (hash sama) tidak di-embed ulang.
 5. **Penempatan.**
-   - `sha256(teks tersamar ternormalisasi)` sama → laporan ulang varian yang ada (`report_count++`).
-   - kNN kosinus tertinggi ≥ `PLACEMENT_SIM_DUPLICATE` → laporan ulang varian tetangga.
-   - ≥ `PLACEMENT_SIM_FAMILY` → varian baru, anak dari tetangga terdekat di keluarga itu; skor kemiripan disimpan sebagai `placement_confidence`.
-   - Di bawahnya → keluarga baru, varian ini menjadi akar.
-   - **Varian tertua yang dilaporkan** = varian dengan `first_reported_on` terkecil dalam keluarga. Ini bukan klaim asal-usul; laporan baru bisa saja memuat teks yang beredar lebih dulu.
-6. **Diff.** Diff tingkat kata (insert/delete/replace) terhadap induk, disimpan sebagai `jsonb`, deterministik.
+   - Saat ingest: `sha256(teks tersamar ternormalisasi)` sama → laporan ulang varian yang ada (`report_count++`).
+   - Saat kurator menyetujui (`services/nlp/src/silsilah/phylogeny`): kandidat dari `match_variants`, lalu keluarga dipilih dari kemiripan ke **centroid** keluarga ≥ `PLACEMENT_SIM_FAMILY`. Keluarga lain yang juga lolos → `merge_suggestion`, tidak digabung otomatis. Tidak ada → keluarga baru.
+   - Pohon keluarga dihitung ulang penuh (deterministik, idempoten): urut menurut `first_seen_reported_at` (awal periode bila tidak presisi), lalu `submitted_at`. Induk = varian lebih awal dengan kemiripan tertinggi ≥ `PLACEMENT_SIM_EDGE`; seri diputus dengan kemiripan token; yang tetap seri → `alt_parent_ids`. Tanpa kandidat → cabang dari akar, `edge_confidence = low`.
+   - **Varian tertua yang dilaporkan** = akar pohon. Ini bukan klaim asal-usul; laporan baru bisa saja memuat teks yang beredar lebih dulu. Selalu ditampilkan dengan `date_precision` dan `report_count`.
+   - Ditulis atomik lewat RPC `apply_family_plan`. Evaluasi: `docs/EVAL.md`.
+6. **Diff.** Penyelarasan token (difflib) terhadap induk → baris `mutations` berkategori (`phylogeny/keywords.yaml`) + `mutation_summary` satu baris. Rasio token < 0,5 = ditulis ulang (tidak dirinci).
 7. **Simpan.** Varian baru berstatus `pending`; hanya `published` yang terlihat publik.
 
 ## Model data (S1, lihat `supabase/migrations/`)
