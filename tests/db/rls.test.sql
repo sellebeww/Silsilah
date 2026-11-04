@@ -3,7 +3,7 @@
 -- JWT diset di dua kunci: auth.uid() versi lama membaca claim.sub, versi GoTrue membaca claims.
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(22);
+select plan(24);
 
 -- Kosongkan data seed agar hitungan pasti; ikut di-rollback.
 truncate public.families, public.variants, public.mutations, public.factcheck_links,
@@ -154,6 +154,15 @@ select set_config('request.jwt.claims',
   '{"sub":"00000000-0000-0000-0000-0000000000c2","role":"authenticated"}', true),
   set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-0000000000c2', true);
 update public.variants set moderation_status = 'approved' where id = '00000000-0000-0000-0000-0000000000a2';
+select throws_ok(
+  $$ update public.variants set body_anonymized = 'Teks diubah kurator' where id = '00000000-0000-0000-0000-0000000000a2' $$,
+  '42501', null, 'kurator tidak bisa mengubah isi teks varian (melewati anonimizer)'
+);
+select throws_ok(
+  $$ insert into public.variants (body_anonymized, body_hash, first_seen_reported_at)
+     values ('Laporan kurator', repeat('7', 64), '2026-02-01') $$,
+  '42501', null, 'kurator tidak bisa insert varian langsung'
+);
 reset role;
 
 select is(
