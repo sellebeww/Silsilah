@@ -1,8 +1,14 @@
+<div align="center">
+
 # Silsilah
 
-> Hoaks punya keluarga. Temukan leluhurnya.
+### Hoaks punya keluarga. Temukan leluhurnya.
 
-Silsilah melacak **mutasi pesan berantai (hoaks)**. Setiap laporan ditempatkan di pohon turunan varian, dan sistem menunjuk **varian tertua yang dilaporkan**. Yang dilacak adalah *isi pesan*, bukan akun penyebar.
+<p>Pelacak mutasi pesan berantai: setiap laporan ditempatkan di pohon turunan varian dan sistem menunjuk varian tertua yang dilaporkan.</p>
+
+<p><img src="https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs&logoColor=white&labelColor=3a3f47" alt="Next.js 16"> <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white&labelColor=3a3f47" alt="React 19"> <img src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white&labelColor=3a3f47" alt="TypeScript 5"> <img src="https://img.shields.io/badge/Python-NLP%20service-3776AB?logo=python&logoColor=white&labelColor=3a3f47" alt="Python NLP service"> <img src="https://img.shields.io/badge/Supabase-backend-3FCF8E?logo=supabase&logoColor=white&labelColor=3a3f47" alt="Supabase backend"> <img src="https://img.shields.io/badge/license-All%20rights%20reserved-1e3a8a?labelColor=3a3f47" alt="license All rights reserved"></p>
+
+</div>
 
 Untuk relawan pemeriksa fakta, jurnalis, guru literasi digital, dan peneliti disinformasi.
 
